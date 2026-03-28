@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MFIN Micrometer · Issue 56 · Q3 FY 2025-26</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg: #f5f3ee;
+  --bg2: #ede9e0;
+  --bg3: #e8e2d6;
+  --card: #ffffff;
+  --card2: #faf8f4;
+  --ink: #1a1612;
+  --ink2: #3d3530;
+  --ink3: #6b6259;
+  --muted: #9e9389;
+  --faint: #c8c0b4;
+  --gold: #b8860b;
+  --gold2: #d4a017;
+  --gold3: #f0c040;
+  --gold-bg: #fdf6e3;
+  --navy: #0f2144;
+  --navy2: #1a3a6e;
+  --navy3: #2558a8;
+  --navy-bg: #eef3fc;
+  --teal: #0a5c5c;
+  --teal2: #0d8a8a;
+  --teal-bg: #e6f7f7;
+  --rose: #8b1a1a;
+  --rose2: #c0392b;
+  --rose-bg: #fdf0ef;
+  --sage: #2d5a27;
+  --sage2: #3a7a32;
+  --sage-bg: #eef6ec;
+  --amber: #7a3d00;
+  --amber2: #c06000;
+  --amber-bg: #fff3e6;
+  --border: rgba(26,22,18,.08);
+  --border2: rgba(26,22,18,.14);
+  --sh1: 0 1px 3px rgba(26,22,18,.06), 0 1px 2px rgba(26,22,18,.04);
+  --sh2: 0 4px 16px rgba(26,22,18,.08), 0 2px 6px rgba(26,22,18,.04);
+  --sh3: 0 12px 40px rgba(26,22,18,.12);
+  --radius: 14px;
+  --radius-sm: 9px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);font-size:13.5px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--bg2);}
+::-webkit-scrollbar-thumb{background:var(--faint);border-radius:99px;}
+
+/* ── LAYOUT ── */
+.shell{display:flex;min-height:100vh;}
+
+/* ── SIDEBAR ── */
+.sb{
+  width:230px;flex-shrink:0;
+  background:var(--navy);
+  position:fixed;inset:0 auto 0 0;z-index:400;
+  display:flex;flex-direction:column;
+  box-shadow:4px 0 24px rgba(0,0,0,.2);
+}
+
+.sb-head{padding:20px 18px 16px;}
+.sb-brand{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.sb-gem{
+  width:36px;height:36px;border-radius:10px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--gold2),var(--gold3));
+  display:flex;align-items:center;justify-content:center;
+  font-size:17px;box-shadow:0 4px 14px rgba(212,160,23,.4);
+}
+.sb-name{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:#fff;line-height:1.2;}
+.sb-issue{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,.28);margin-top:2px;}
+.sb-pill{
+  display:inline-flex;align-items:center;gap:5px;
+  background:rgba(212,160,23,.15);border:1px solid rgba(212,160,23,.3);
+  color:var(--gold3);padding:4px 10px;border-radius:20px;
+  font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:500;
+}
+.sb-pill::before{content:'●';font-size:7px;color:#4ade80;animation:blink 2s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+.sb-divider{height:1px;background:rgba(255,255,255,.07);margin:0 16px;}
+.sb-nav{padding:10px 10px;flex:1;overflow-y:auto;}
+.sb-group{font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,.2);padding:10px 10px 4px;}
+.nav-item{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 10px;border-radius:9px;
+  font-size:12px;font-weight:500;color:rgba(255,255,255,.4);
+  cursor:pointer;transition:all .15s ease;margin-bottom:2px;
+  position:relative;
+}
+.nav-item:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.8);}
+.nav-item.active{
+  background:linear-gradient(135deg,rgba(212,160,23,.2),rgba(212,160,23,.08));
+  color:var(--gold3);border-left:2px solid var(--gold2);
+}
+.nav-dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.5;flex-shrink:0;}
+.nav-item.active .nav-dot{opacity:1;}
+.nav-badge{margin-left:auto;background:rgba(192,57,43,.25);color:#f87171;font-size:8px;font-weight:700;padding:1px 6px;border-radius:20px;font-family:'JetBrains Mono',monospace;}
+
+.sb-foot{padding:14px 18px;border-top:1px solid rgba(255,255,255,.07);}
+.sb-date{font-size:10px;color:rgba(255,255,255,.22);line-height:1.6;}
+.sb-src{font-size:9px;color:rgba(255,255,255,.14);margin-top:2px;}
+
+/* ── MAIN ── */
+.main{margin-left:230px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
+
+/* ── TOPBAR ── */
+.topbar{
+  background:var(--card);border-bottom:1px solid var(--border);
+  padding:0 28px;height:58px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:300;
+  box-shadow:0 1px 0 var(--border),0 4px 20px rgba(26,22,18,.04);
+}
+.tb-left{}
+.tb-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:600;color:var(--ink);}
+.tb-sub{font-size:10px;color:var(--muted);margin-top:1px;font-weight:400;}
+.tb-right{display:flex;align-items:center;gap:8px;}
+
+.chip{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:5px 12px;border-radius:20px;border:1px solid var(--border2);
+  font-size:10.5px;font-weight:600;color:var(--ink3);background:var(--bg);
+  cursor:pointer;transition:all .15s;
+}
+.chip:hover{background:var(--card);box-shadow:var(--sh1);}
+.chip.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+
+.btn-export{
+  background:linear-gradient(135deg,var(--navy),var(--navy2));
+  color:#fff;border:none;padding:8px 16px;border-radius:9px;
+  font-family:'DM Sans',sans-serif;font-size:11.5px;font-weight:600;
+  cursor:pointer;box-shadow:0 2px 10px rgba(15,33,68,.25);
+  transition:all .15s;display:flex;align-items:center;gap:6px;
+}
+.btn-export:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(15,33,68,.3);}
+
+.divider-v{width:1px;height:20px;background:var(--border2);}
+
+/* ── PAGE ── */
+.pg{padding:24px 28px 40px;display:flex;flex-direction:column;gap:20px;}
+.tab-pane{display:none;}
+.tab-pane.active{display:flex;flex-direction:column;gap:20px;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── ALERT BARS ── */
+.alert{
+  border-radius:var(--radius-sm);padding:12px 16px;
+  display:flex;align-items:flex-start;gap:11px;font-size:12px;line-height:1.6;
+}
+.alert-gold{background:linear-gradient(135deg,#fef9ec,#fffcf5);border:1px solid rgba(184,134,11,.25);color:var(--amber);}
+.alert-navy{background:linear-gradient(135deg,#eef3fc,#f6f9ff);border:1px solid rgba(37,88,168,.2);color:var(--navy2);}
+.alert-rose{background:linear-gradient(135deg,#fdf5f5,#fff8f8);border:1px solid rgba(192,57,43,.2);color:var(--rose);}
+.alert-sage{background:linear-gradient(135deg,#eef6ec,#f7fdf5);border:1px solid rgba(58,122,50,.2);color:var(--sage);}
+.alert-icon{font-size:16px;flex-shrink:0;margin-top:1px;}
+
+/* ── SECTION HEADERS ── */
+.sec-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;}
+.sec-hd-l{display:flex;align-items:flex-start;gap:10px;}
+.sec-bar{width:3px;min-height:24px;border-radius:2px;background:linear-gradient(180deg,var(--gold2),var(--teal2));flex-shrink:0;margin-top:2px;}
+.sec-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--ink);}
+.sec-sub{font-size:10px;color:var(--muted);margin-top:2px;}
+.sec-action{font-size:10.5px;color:var(--navy3);font-weight:600;cursor:pointer;}
+
+/* ── GRIDS ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+.g32{display:grid;grid-template-columns:3fr 2fr;gap:16px;}
+.g23{display:grid;grid-template-columns:2fr 3fr;gap:16px;}
+.g21{display:grid;grid-template-columns:2fr 1fr;gap:16px;}
+.g12{display:grid;grid-template-columns:1fr 2fr;gap:16px;}
+
+/* ── KPI CARDS ── */
+.kpi{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:18px 20px;
+  box-shadow:var(--sh1);position:relative;overflow:hidden;
+  transition:box-shadow .2s,transform .2s;
+}
+.kpi:hover{box-shadow:var(--sh2);transform:translateY(-2px);}
+.kpi::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  border-radius:var(--radius) var(--radius) 0 0;
+}
+.kpi.k-gold::before{background:linear-gradient(90deg,var(--gold),var(--gold3));}
+.kpi.k-navy::before{background:linear-gradient(90deg,var(--navy),var(--navy3));}
+.kpi.k-teal::before{background:linear-gradient(90deg,var(--teal),var(--teal2));}
+.kpi.k-sage::before{background:linear-gradient(90deg,var(--sage),var(--sage2));}
+.kpi.k-rose::before{background:linear-gradient(90deg,var(--rose),var(--rose2));}
+.kpi.k-amber::before{background:linear-gradient(90deg,var(--amber),var(--amber2));}
+.kpi.k-ink::before{background:linear-gradient(90deg,var(--ink),var(--ink2));}
+
+.kpi-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;}
+.kpi-label{font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);}
+.kpi-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;}
+.icon-gold{background:var(--gold-bg);}
+.icon-navy{background:var(--navy-bg);}
+.icon-teal{background:var(--teal-bg);}
+.icon-sage{background:var(--sage-bg);}
+.icon-rose{background:var(--rose-bg);}
+.icon-amber{background:var(--amber-bg);}
+.icon-ink{background:var(--bg2);}
+
+.kpi-val{font-family:'Playfair Display',serif;font-size:26px;font-weight:600;color:var(--ink);line-height:1;margin-bottom:6px;}
+.kpi-val.sm{font-size:21px;}
+.kpi-val.xs{font-size:18px;}
+.kpi-foot{display:flex;align-items:center;gap:5px;flex-wrap:wrap;font-size:10.5px;}
+.tag-up{color:var(--sage2);font-weight:700;}
+.tag-dn{color:var(--rose2);font-weight:700;}
+.tag-nu{color:var(--muted);}
+.kpi-bench{
+  display:flex;align-items:center;gap:6px;
+  padding:6px 10px;background:var(--bg);border-radius:7px;
+  margin-top:8px;border:1px solid var(--border);font-size:10px;
+}
+.kb-l{color:var(--muted);flex:1;}
+.kb-v{font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--navy2);}
+.kb-sep{color:var(--faint);}
+.kb-r{font-family:'JetBrains Mono',monospace;color:var(--muted);}
+
+/* ── CARDS ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--sh1);}
+.card-sm{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;box-shadow:var(--sh1);}
+.cw{position:relative;}
+
+/* ── CHIPS / BADGES ── */
+.badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:20px;font-size:9.5px;font-weight:700;}
+.b-good{background:var(--sage-bg);color:var(--sage2);border:1px solid rgba(58,122,50,.2);}
+.b-warn{background:var(--amber-bg);color:var(--amber2);border:1px solid rgba(192,96,0,.2);}
+.b-bad{background:var(--rose-bg);color:var(--rose2);border:1px solid rgba(192,57,43,.2);}
+.b-neu{background:var(--bg2);color:var(--ink3);border:1px solid var(--border2);}
+.b-gold{background:var(--gold-bg);color:var(--gold);border:1px solid rgba(184,134,11,.25);}
+.b-navy{background:var(--navy-bg);color:var(--navy2);border:1px solid rgba(37,88,168,.2);}
+
+/* ── TABLE ── */
+.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--sh1);}
+.table-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+table{width:100%;border-collapse:collapse;}
+thead th{
+  text-align:left;padding:9px 16px;
+  font-size:9px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.9px;color:var(--muted);
+  background:var(--bg);border-bottom:1px solid var(--border);
+}
+tbody td{padding:11px 16px;font-size:12px;border-bottom:1px solid rgba(26,22,18,.04);color:var(--ink2);vertical-align:middle;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:var(--bg);}
+.mono{font-family:'JetBrains Mono',monospace;font-size:11.5px;}
+.bold{font-weight:600;color:var(--ink);}
+
+/* ── ENTITY CARDS ── */
+.ent-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:18px;box-shadow:var(--sh1);
+  position:relative;overflow:hidden;transition:all .2s;
+}
+.ent-card:hover{box-shadow:var(--sh2);transform:translateY(-2px);}
+.ent-stripe{position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--radius) var(--radius) 0 0;}
+.ent-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding-top:4px;}
+.ent-name{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);}
+.ent-share-pill{padding:2px 8px;border-radius:20px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;}
+.ent-val{font-family:'Playfair Display',serif;font-size:22px;font-weight:600;color:var(--ink);margin-bottom:3px;}
+.ent-sub{font-size:10px;color:var(--muted);margin-bottom:12px;}
+.ent-rows{}
+.ent-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:11px;}
+.ent-row:last-child{border:none;}
+.ent-rl{color:var(--muted);}
+.ent-rv{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;color:var(--ink2);}
+
+/* ── PROGRESS BARS ── */
+.prog{height:5px;background:var(--bg2);border-radius:3px;overflow:hidden;}
+.prog-f{height:100%;border-radius:3px;transition:width 1.2s cubic-bezier(.4,0,.2,1);}
+.prog-gold{background:linear-gradient(90deg,var(--gold),var(--gold3));}
+.prog-navy{background:linear-gradient(90deg,var(--navy),var(--navy3));}
+.prog-teal{background:linear-gradient(90deg,var(--teal),var(--teal2));}
+.prog-sage{background:linear-gradient(90deg,var(--sage),var(--sage2));}
+.prog-rose{background:linear-gradient(90deg,var(--rose),var(--rose2));}
+.prog-amber{background:linear-gradient(90deg,var(--amber),var(--amber2));}
+
+/* ── METRIC ROWS ── */
+.mrow{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--bg);border-radius:8px;border:1px solid var(--border);}
+.mrow-l{font-size:11px;color:var(--muted);}
+.mrow-r{font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:600;color:var(--ink);display:flex;align-items:center;gap:5px;}
+.mrow-up{font-size:9px;color:var(--sage2);}
+.mrow-dn{font-size:9px;color:var(--rose2);}
+
+/* ── LENDER SHARE BARS ── */
+.share-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.share-label{font-size:11px;font-weight:600;color:var(--ink2);width:130px;}
+.share-bar-wrap{flex:1;height:12px;background:var(--bg2);border-radius:6px;overflow:hidden;}
+.share-bar-fill{height:100%;border-radius:6px;}
+.share-pct{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;width:36px;text-align:right;color:var(--ink);}
+.share-amt{font-size:9.5px;color:var(--muted);width:72px;text-align:right;}
+
+/* ── RANK LIST ── */
+.rank-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
+.rank-row:last-child{border:none;}
+.rank-n{
+  width:24px;height:24px;border-radius:7px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:800;background:var(--bg2);color:var(--muted);
+}
+.rank-n.top3{background:var(--gold-bg);color:var(--gold);}
+.rank-name{font-size:12px;font-weight:600;color:var(--ink);flex:1;}
+.rank-sub{font-size:9.5px;color:var(--muted);}
+.rank-val{font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:600;color:var(--ink2);}
+
+/* ── STATE GRID ── */
+.state-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.state-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:14px;box-shadow:var(--sh1);
+  cursor:pointer;transition:all .18s;
+}
+.state-card:hover{box-shadow:var(--sh2);border-color:var(--gold2);transform:translateY(-1px);}
+.sc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.sc-code{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--ink);}
+.sc-aum{font-family:'Playfair Display',serif;font-size:18px;font-weight:600;color:var(--ink);margin-bottom:2px;}
+.sc-meta{font-size:9.5px;color:var(--muted);margin-bottom:8px;}
+
+/* ── PAR MINI BAR ── */
+.par-mini{display:flex;align-items:center;gap:6px;}
+.par-track{flex:1;height:5px;background:var(--bg2);border-radius:3px;overflow:hidden;}
+.par-fill{height:100%;border-radius:3px;}
+.par-good .par-fill{background:var(--sage2);}
+.par-warn .par-fill{background:var(--amber2);}
+.par-bad .par-fill{background:var(--rose2);}
+
+/* ── STATUS DOT ── */
+.dot{display:inline-flex;align-items:center;gap:4px;font-size:9.5px;font-weight:700;padding:2px 8px;border-radius:20px;}
+.dot-good{background:var(--sage-bg);color:var(--sage2);}
+.dot-warn{background:var(--amber-bg);color:var(--amber2);}
+.dot-bad{background:var(--rose-bg);color:var(--rose2);}
+
+/* ── REGIONAL CARD ── */
+.reg-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;text-align:center;box-shadow:var(--sh1);}
+.reg-val{font-family:'Playfair Display',serif;font-size:20px;font-weight:600;color:var(--ink);margin-bottom:3px;}
+.reg-label{font-size:9.5px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;}
+.reg-ub{font-size:10px;color:var(--ink3);}
+
+/* ── DISCLAIMER ── */
+.disclaimer{
+  background:var(--card2);border:1px solid var(--border2);
+  border-radius:var(--radius-sm);padding:12px 16px;
+  font-size:10px;color:var(--muted);line-height:1.7;
+}
+
+/* ── FOOTER ── */
+.footer{
+  background:var(--card);border-top:1px solid var(--border);
+  padding:12px 28px;display:flex;align-items:center;justify-content:space-between;
+  font-size:9.5px;color:var(--muted);
+}
+.footer-brand{font-family:'Playfair Display',serif;font-size:11px;color:var(--gold);font-weight:600;}
+
+/* ── ANIMATIONS ── */
+@keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.anim{animation:slideUp .45s ease both;}
+.anim-1{animation-delay:.05s}.anim-2{animation-delay:.10s}.anim-3{animation-delay:.15s}.anim-4{animation-delay:.20s}.anim-5{animation-delay:.25s}
+
+/* ── LOADING STATES ── */
+.chart-loading{display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-size:12px;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1200px){
+  .g4{grid-template-columns:repeat(2,1fr);}
+  .g5{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:900px){
+  .sb{width:200px;}
+  .main{margin-left:200px;}
+  .g2,.g32,.g23{grid-template-columns:1fr;}
+  .g3{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ══════════════════ SIDEBAR ══════════════════ -->
+<aside class="sb">
+  <div class="sb-head">
+    <div class="sb-brand">
+      <div class="sb-gem">📡</div>
+      <div>
+        <div class="sb-name">Micrometer</div>
+        <div class="sb-issue">Issue 56 · MFIN</div>
+      </div>
+    </div>
+    <div class="sb-pill">Q3 FY 2025–26 · Live Data</div>
+  </div>
+
+  <div class="sb-divider"></div>
+
+  <nav class="sb-nav">
+    <div class="sb-group">Universe</div>
+    <div class="nav-item active" data-tab="overview">
+      <div class="nav-dot"></div>Industry Overview
+    </div>
+    <div class="nav-item" data-tab="entities">
+      <div class="nav-dot"></div>Lender Analysis
+    </div>
+    <div class="nav-item" data-tab="par">
+      <div class="nav-dot"></div>PAR & Asset Quality
+      <span class="nav-badge">!</span>
+    </div>
+
+    <div class="sb-group">NBFC-MFI Deep Dive</div>
+    <div class="nav-item" data-tab="nbfc">
+      <div class="nav-dot"></div>NBFC-MFI Insights
+    </div>
+    <div class="nav-item" data-tab="disbursement">
+      <div class="nav-dot"></div>Disbursements
+    </div>
+    <div class="nav-item" data-tab="funding">
+      <div class="nav-dot"></div>Funding & Borrowings
+    </div>
+
+    <div class="sb-group">Geography</div>
+    <div class="nav-item" data-tab="regional">
+      <div class="nav-dot"></div>Regional Distribution
+    </div>
+    <div class="nav-item" data-tab="states">
+      <div class="nav-dot"></div>State Intelligence
+    </div>
+  </nav>
+
+  <div class="sb-foot">
+    <div class="sb-date">Data as on 31 December 2025<br>43 MFIN Member NBFC-MFIs</div>
+    <div class="sb-src">Source: CRIF High Mark · MFIN Self-Reported</div>
+  </div>
+</aside>
+
+<!-- ══════════════════ MAIN ══════════════════ -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="tb-left">
+      <div class="tb-title" id="tb-title">Industry Overview</div>
+      <div class="tb-sub" id="tb-sub">Microfinance Universe · All Lender Categories · Q3 FY 2025-26</div>
+    </div>
+    <div class="tb-right">
+      <div class="chip active">Q3 FY26</div>
+      <div class="chip">Q2 FY26</div>
+      <div class="chip">Q3 FY25</div>
+      <div class="divider-v"></div>
+      <button class="btn-export" onclick="window.print()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        Export
+      </button>
+    </div>
+  </div>
+
+  <!-- PAGE CONTENT -->
+  <div class="pg" id="page-content">
+
+  <!-- ══════════════════════════════════════════════════════
+       TAB 1: OVERVIEW
+  ══════════════════════════════════════════════════════ -->
+  <div class="tab-pane active" id="tab-overview">
+
+    <div class="alert alert-gold">
+      <span class="alert-icon">⚡</span>
+      <div><strong>Q3 FY26 Industry Snapshot:</strong> Total GLP at <strong>₹3,14,728 Cr</strong> — contracted <strong>▼18.3% YoY</strong>. Active loan accounts: <strong>10.5 Cr</strong>. PAR 180+ rising to <strong>17.0%</strong> (legacy stress) but short-bucket PAR 1-180 improving sharply. Q3 disbursements at ₹60,853 Cr with 101 Lk loans show <strong>recovery momentum</strong> building.</div>
+    </div>
+
+    <!-- KPI Row 1 -->
+    <div>
+      <div class="sec-hd">
+        <div class="sec-hd-l"><div class="sec-bar"></div><div><div class="sec-title">Microfinance Universe — Key Metrics</div><div class="sec-sub">CRIF High Mark Bureau Data · All 207 Lending Entities · 31 December 2025</div></div></div>
+      </div>
+      <div class="g4">
+        <div class="kpi k-gold anim anim-1">
+          <div class="kpi-hd"><span class="kpi-label">Gross Loan Portfolio</span><div class="kpi-icon icon-gold">🏦</div></div>
+          <div class="kpi-val">₹3,14,728 Cr</div>
+          <div class="kpi-foot"><span class="tag-dn">▼ 18.3% YoY</span><span class="tag-nu">Dec-24: ₹3,85,348 Cr</span></div>
+          <div class="kpi-bench"><span class="kb-l">Clean Portfolio (excl. 180+ DPD)</span><span class="kb-v">₹2,61,177 Cr</span></div>
+        </div>
+        <div class="kpi k-navy anim anim-2">
+          <div class="kpi-hd"><span class="kpi-label">Unique Borrowers</span><div class="kpi-icon icon-navy">👥</div></div>
+          <div class="kpi-val">6.6 Cr</div>
+          <div class="kpi-foot"><span class="tag-dn">▼ 16.5% YoY</span><span class="tag-nu">Dec-24: 7.9 Cr</span></div>
+          <div class="kpi-bench"><span class="kb-l">Active Loan Accounts</span><span class="kb-v">10.5 Cr</span><span class="kb-sep">|</span><span class="kb-r">Peak: 14.9 Cr</span></div>
+        </div>
+        <div class="kpi k-teal anim anim-3">
+          <div class="kpi-hd"><span class="kpi-label">Q3 Disbursements</span><div class="kpi-icon icon-teal">📤</div></div>
+          <div class="kpi-val">₹60,853 Cr</div>
+          <div class="kpi-foot"><span class="tag-up">▲ Recovering</span><span class="tag-nu">Q3 FY25: ₹56,677 Cr</span></div>
+          <div class="kpi-bench"><span class="kb-l">Loans Disbursed</span><span class="kb-v">101 Lk</span><span class="kb-sep">|</span><span class="kb-r">Avg: ₹60,250</span></div>
+        </div>
+        <div class="kpi k-rose anim anim-4">
+          <div class="kpi-hd"><span class="kpi-label">PAR 180+ (Deep Stress)</span><div class="kpi-icon icon-rose">⚠️</div></div>
+          <div class="kpi-val sm">17.0%</div>
+          <div class="kpi-foot"><span class="tag-dn">↑ from 9.7% Q3 FY25</span></div>
+          <div class="kpi-bench"><span class="kb-l">PAR 1-180 (improving)</span><span class="kb-v">2.8%</span><span class="kb-sep">|</span><span class="kb-r">was 8.6%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KPI Row 2 - Lender Breakdown -->
+    <div class="g5">
+      <div class="kpi k-navy anim anim-1">
+        <div class="kpi-label" style="margin-bottom:8px">NBFC-MFIs</div>
+        <div class="kpi-val sm">₹1,32,418 Cr</div>
+        <div class="kpi-foot"><span class="tag-dn">▼ 11.9%</span><span class="tag-nu" style="background:var(--navy-bg);color:var(--navy2);padding:1px 6px;border-radius:10px;font-weight:700;font-size:9px">42.1%</span></div>
+      </div>
+      <div class="kpi k-teal anim anim-2">
+        <div class="kpi-label" style="margin-bottom:8px">Banks</div>
+        <div class="kpi-val sm">₹83,905 Cr</div>
+        <div class="kpi-foot"><span class="tag-dn">▼ 33.6%</span><span class="tag-nu" style="background:var(--teal-bg);color:var(--teal);padding:1px 6px;border-radius:10px;font-weight:700;font-size:9px">26.7%</span></div>
+      </div>
+      <div class="kpi k-sage anim anim-3">
+        <div class="kpi-label" style="margin-bottom:8px">Small Finance Banks</div>
+        <div class="kpi-val sm">₹55,187 Cr</div>
+        <div class="kpi-foot"><span class="tag-dn">▼ 12.0%</span><span class="tag-nu" style="background:var(--sage-bg);color:var(--sage);padding:1px 6px;border-radius:10px;font-weight:700;font-size:9px">17.5%</span></div>
+      </div>
+      <div class="kpi k-amber anim anim-4">
+        <div class="kpi-label" style="margin-bottom:8px">NBFCs</div>
+        <div class="kpi-val sm">₹39,456 Cr</div>
+        <div class="kpi-foot"><span class="tag-dn">▼ 9.7%</span><span class="tag-nu" style="background:var(--amber-bg);color:var(--amber);padding:1px 6px;border-radius:10px;font-weight:700;font-size:9px">12.5%</span></div>
+      </div>
+      <div class="kpi k-ink anim anim-5">
+        <div class="kpi-label" style="margin-bottom:8px">Lender Entities</div>
+        <div class="kpi-val sm">207</div>
+        <div class="kpi-foot"><span class="tag-nu">714 districts · 28 states + 8 UTs</span></div>
+      </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="g32">
+      <div class="card">
+        <div class="sec-hd"><div class="sec-hd-l"><div class="sec-bar"></div><div class="sec-title">GLP Trend vs Outreach (Mar-23 → Dec-25)</div></div></div>
+        <div class="cw" style="height:240px"><canvas id="c-glptrend"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="sec-hd"><div class="sec-hd-l"><div class="sec-bar"></div><div class="sec-title">Portfolio Share by Lender</div></div></div>
+        <div id="share-bars-overview" style="margin-top:4px;padding-top:4px"></div>
+      </div>
+    </div>
+
+    <!-- PAR Overview Chart -->
+    <div class="card">
+      <div class="sec-hd"><div class="sec-hd-l"><div class="sec-bar"></div><div><div class="sec-title">Industry PAR Bucket Evolution (Mar-23 → Dec-25)</div><div class="sec-sub">All lender categories · CRIF bureau data</div></div></div></div>
+      <div class="cw" style="height:210px"><canvas id="c-par-overview"></canvas></div>
+    </div>
+
+    <!-- Universe Table -->
+    <div class="table-wrap">
+      <div class="table-head">
+        <div class="sec-hd-l"><div class="sec-bar"></div><div class="sec-title">Overall Portfolio & Outreach — All Lender Categories</div></div>
+        <span class="badge b-navy">CRIF Bureau Data</span>
+      </div>
+      <table>
+        <thead><tr><th>Entity Type</th><th>Entities</th><th>Unique Borrowers</th><th>Loan Accounts</th><th>GLP Dec-25 (₹ Cr)</th><th>GLP Dec-24 (₹ Cr)</th><th>YoY Change</th><th>Share</th><th>PAR 1-180</th></tr></thead>
+        <tbody>
+          <tr><td class="bold">NBFC-MFIs</td><td class="mono">85</td><td class="mono">3.2 Cr</td><td class="mono">4.3 Cr</td><td class="mono bold">1,32,418</td><td class="mono">1,50,282</td><td><span class="badge b-bad">▼ 11.9%</span></td><td><div style="display:flex;align-items:center;gap:6px"><span class="mono bold">42.1%</span><div style="flex:1;height:5px;background:var(--bg2);border-radius:2px"><div style="width:42.1%;height:100%;background:#1a3a6e;border-radius:2px"></div></div></div></td><td><span class="badge b-good">3.9%</span></td></tr>
+          <tr><td class="bold">Banks</td><td class="mono">17</td><td class="mono">2.4 Cr</td><td class="mono">3.3 Cr</td><td class="mono bold">83,905</td><td class="mono">1,26,437</td><td><span class="badge b-bad">▼ 33.6%</span></td><td><div style="display:flex;align-items:center;gap:6px"><span class="mono bold">26.7%</span><div style="flex:1;height:5px;background:var(--bg2);border-radius:2px"><div style="width:26.7%;height:100%;background:#0a5c5c;border-radius:2px"></div></div></div></td><td><span class="badge b-warn">6.0%</span></td></tr>
+          <tr><td class="bold">Small Finance Banks</td><td class="mono">10</td><td class="mono">1.6 Cr</td><td class="mono">1.8 Cr</td><td class="mono bold">55,187</td><td class="mono">62,686</td><td><span class="badge b-bad">▼ 12.0%</span></td><td><div style="display:flex;align-items:center;gap:6px"><span class="mono bold">17.5%</span><div style="flex:1;height:5px;background:var(--bg2);border-radius:2px"><div style="width:17.5%;height:100%;background:#2d5a27;border-radius:2px"></div></div></div></td><td><span class="badge b-good">4.2%</span></td></tr>
+          <tr><td class="bold">NBFCs</td><td class="mono">95</td><td class="mono">1.0 Cr</td><td class="mono">1.0 Cr</td><td class="mono bold">39,456</td><td class="mono">43,675</td><td><span class="badge b-bad">▼ 9.7%</span></td><td><div style="display:flex;align-items:center;gap:6px"><span class="mono bold">12.5%</span><div style="flex:1;height:5px;background:var(--bg2);border-radius:2px"><div style="width:12.5%;height:100%;background:#c06000;border-radius:2px"></div></div></div></td><td><span class="badge b-good">3.3%</span></td></tr>
+          <tr><td class="bold">Others (Non-Profit MFIs)</td><td class="mono">—</td><td class="mono">0.1 Cr</td><td class="mono">0.1 Cr</td><td class="mono bold">3,761</td><td class="mono">2,269</td><td><span class="badge b-good">▲ 65.8%</span></td><td><div style="display:flex;align-items:center;gap:6px"><span class="mono bold">1.2%</span><div style="flex:1;height:5px;background:var(--bg2);border-radius:2px"><div style="width:1.2%;height:100%;background:#7a3d00;border-radius:2px"></div></div></div></td><td><span class="badge b-neu">—</span></td></tr>
+          <tr style="background:var(--bg)"><td class="bold" style="color:var(--navy2)">Total Industry</td><td class="mono bold">207</td><td class="mono bold">6.6 Cr</td><td class="mono bold">10.5 Cr</td><td class="mono bold" style="color:var(--gold)">3,14,728</td><td class="mono bold">3,85,348</td><td><span class="badge b-bad">▼ 18.3%</span></td><td class="mono bold">100%</td><td><span class="badge b-bad">17.0% (180+)</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="disclaimer">
+      <strong>Disclaimer:</strong> This dashboard is based on the personal research of <strong>Priyabrata Banerjee</strong> and is intended solely for <strong>educational purposes</strong>. It has been developed using publicly available data from <a href="https://mfinindia.org/Resources/micrometer" style="color:var(--navy2);text-decoration:underline" target="_blank">https://mfinindia.org/Resources/micrometer</a>. The analysis reflects MFIN Micrometer Issue 56 (Data as on 31 December 2025). All figures sourced from CRIF High Mark (Section I) and MFIN Member self-reported data (Section II). Not for commercial redistribution.
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       TAB 2: ENTITIES
+  ══════════════════════════════════════════════════════ -->
+  <div class="tab-pane" id="tab-entities">
+    <div class="alert alert-navy">
+      <span class="alert-icon">🏗️</span>
+      <div><strong>Lender Landscape:</strong> NBFC-MFIs lead at 42.1% share despite contraction. Banks saw sharpest decline ▼33.6% — partly from ~5% portfolio reclassification (MFI → retail) flagged to RBI. All categories showing QoQ PAR recovery. NBFCs show highest average ticket size at ₹71,666.</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+      <div class="ent-card anim anim-1">
+        <div class="ent-stripe" style="background:linear-gradient(90deg,#0f2144,#2558a8)"></div>
+        <div class="ent-head"><div class="ent-name">NBFC-MFIs</div><span class="ent-share-pill" style="background:var(--navy-bg);color:var(--navy2)">42.1%</span></div>
+        <div class="ent-val">₹1,32,418 Cr</div>
+        <div class="ent-sub">85 entities · 4.3 Cr accounts</div>
+        <div class="ent-rows">
+          <div class="ent-row"><span class="ent-rl">Districts</span><span class="ent-rv">705</span></div>
+          <div class="ent-row"><span class="ent-rl">Q3 Disbursement</span><span class="ent-rv">₹27,537 Cr</span></div>
+          <div class="ent-row"><span class="ent-rl">Avg Ticket Size</span><span class="ent-rv">₹57,576</span></div>
+          <div class="ent-row"><span class="ent-rl">PAR 1–180</span><span class="ent-rv" style="color:var(--sage2)">3.9% ↓</span></div>
+          <div class="ent-row"><span class="ent-rl">YoY Ticket Change</span><span class="ent-rv" style="color:var(--sage2)">+11.4%</span></div>
+          <div class="ent-row"><span class="ent-rl">Avg Loan O/S</span><span class="ent-rv">₹55,954</span></div>
+        </div>
+      </div>
+      <div class="ent-card anim anim-2">
+        <div class="ent-stripe" style="background:linear-gradient(90deg,#0a5c5c,#0d8a8a)"></div>
+        <div class="ent-head"><div class="ent-name">Banks</div><span class="ent-share-pill" style="background:var(--teal-bg);color:var(--teal)">26.7%</span></div>
+        <div class="ent-val">₹83,905 Cr</div>
+        <div class="ent-sub">17 entities · 3.3 Cr accounts</div>
+        <div class="ent-rows">
+          <div class="ent-row"><span class="ent-rl">Districts</span><span class="ent-rv">708</span></div>
+          <div class="ent-row"><span class="ent-rl">Q3 Disbursement</span><span class="ent-rv">₹15,900 Cr</span></div>
+          <div class="ent-row"><span class="ent-rl">Avg Ticket Size</span><span class="ent-rv">₹58,169</span></div>
+          <div class="ent-row"><span class="ent-rl">PAR 1–180</span><span class="ent-rv" style="color:var(--amber2)">6.0% ↓</span></div>
+          <div class="ent-row"><span class="ent-rl">YoY Ticket Change</span><span class="ent-rv" style="color:var(--sage2)">+8.3%</span></div>
+          <div class="ent-row"><span class="ent-rl">Avg Loan O/S</span><span class="ent-rv">₹25,426</span></div>
+        </div>
+      </div>
+      <div class="ent-card anim anim-3">
+        <div class="ent-stripe" style="background:linear-gradient(90deg,#2d5a27,#3a7a32)"></div>
+        <div class="ent-head"><div class="ent-name">Small Finance Banks</div><span class="ent-share-pill" style="background:var(--sage-bg);color:var(--sage2)">17.5%</span></div>
+        <div class="ent-val">₹55,187 Cr</div>
+        <div class="ent-sub">10 entities · 1.8 Cr accounts</div>
+        <div class="ent-rows">
+          <div class="ent-row"><span class="ent-rl">Districts</span><span class="ent-rv">691</span></div>
+          <div class="ent-row"><span class="ent-rl">Q3 Disbursement</span><span class="ent-rv">₹9,401 Cr</span></div>
+          <div class="ent-row"><span class="ent-rl">Avg Ticket Size</span><span class="ent-rv">₹63,137</span></div>
+          <div class="ent-row"><span class="ent-rl">PAR 1–180</span><span class="ent-rv" style="color:var(--sage2)">4.2% ↓</span></div>
+          <div class="ent-row"><span class="ent-rl">YoY Ticket Change</span><span class="ent-rv" style="color:var(--sage2)">+16.9%</span></div>
+          <div class="ent-row"><span class="ent-rl">Avg Loan O/S</span><span class="ent-rv">₹30,660</span></div>
+        </div>
+      </div>
+      <div class="ent-card anim anim-4">
+        <div class="ent-stripe" style="background:linear-gradient(90deg,#7a3d00,#c06000)"></div>
+        <div class="ent-head"><div class="ent-name">NBFCs</div><span class="ent-share-pill" style="background:var(--amber-bg);color:var(--amber2)">12.5%</span></div>
+        <div class="ent-val">₹39,456 Cr</div>
+        <div class="ent-sub">95 entities · 1.0 Cr accounts</div>
+        <div class="ent-rows">
+          <div class="ent-row"><span class="ent-rl">Districts</span><span class="ent-rv">688</span></div>
+          <div class="ent-row"><span class="ent-rl">Q3 Disbursement</span><span class="ent-rv">₹7,677 Cr</span></div>
+          <div class="ent-row"><span class="ent-rl">Avg Ticket Size</span><span class="ent-rv">₹71,666</span></div>
+          <div class="ent-row"><span class="ent-rl">PAR 1–180</span><span class="ent-rv" style="color:var(--sage2)">3.3% ↓</span></div>
+          <div class="ent-row"><span class="ent-rl">YoY Ticket Change</span><span class="ent-rv" style="color:var(--sage2)">+24.0%</span></div>
+          <div class="ent-row"><span class="ent-rl">Avg Loan O/S</span><span class="ent-rv">₹39,456</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="card">
+        <div class="sec-hd"><div class="sec-hd-l"><div class="sec-bar"></div><div class="sec-title">PAR 31–180 by Entity — 3 Period Comparison</div></div></div>
+        <div class="cw" style="height:240px"><canvas id="c-ent-par"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="sec-hd"><div class="sec-hd-l"><div class="sec-bar"></div><div class="sec-title">Avg Disbursement Ticket Size (₹)</div></div></div>
+        <div class="cw" style="height:240px"><canvas id="c-ent-ticket"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec-hd"><div class="sec-hd-l"><div class="sec-bar"></div><div class="sec-title">Portfolio Outstanding — Dec-24 vs Sep-25 vs Dec-25 (₹ Cr)</div></div></div>
+      <div class="cw" style="height:220px"><canvas id="c-ent-pos"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       TAB 3: PAR & ASSET QUALITY
+  ══════════════════════════════════════════════════════ -->
+  <div class="tab-pane" id="tab-par">
+    <div class="alert alert-rose">
+      <span class="alert-icon">🔴</span>
+      <div><strong>Stress Signal:</strong> PAR 180+ has risen to <strong>17.0%</strong> (Dec-25) vs 9.7% in Dec-24 — driven by loans from the 2023-24 over-leveraging cycle. However, short-bucket PAR is recovering strongly: PAR 31-60 improved to <strong>0.7%</strong> and PAR 91-180 to <strong>2.8%</strong> from highs. New vintage performance is healthy.</div>
+    </div>
+    <div class="g4">
+      <div class="kpi k-sage anim anim-1"><div class="kpi-hd"><span class="kpi-label">PAR 31–60 (Industry)</span></div><div class="kpi-val sm">0.7%</div><div class="kpi-foot"><span class="tag-up">↓ from 1.0%</span><span class="tag-nu">Q3 FY25</span></div><div class="kpi-bench"><span class="kb-l">Sep-25</span><span class="kb-v">1.4%</span><span class="kb-sep">|</span><span class="kb-r">Peak: 1.6% Mar-25</span></div></div>
+      <div class="kpi k-amber anim anim-2"><div class="kpi-hd"><span class="kpi-label">PAR 61–90 (Industry)</span></div><div class="kpi-val sm">0.6%</div><div class="kpi-foot"><span class="tag-up">↓ from 1.0%</span><span class="tag-nu">Q3 FY25</span></div><div class="kpi-bench"><span class="kb-l">Sep-25</span><span class="kb-v">1.4%</span><span class="kb-sep">|</span><span class="kb-r">Peak: 2.0% Mar-25</span></div></div>
+      <div class="kpi k-rose anim anim-3"><div class="kpi-hd"><span class="kpi-label">PAR 91–180 (Industry)</span></div><div class="kpi-val sm">2.8%</div><div class="kpi-foot"><span class="tag-up">↓ from 7.3%</span><span class="tag-nu">Q3 FY25</span></div><div class="kpi-bench"><span class="kb-l">Sep-25</span><span class="kb-v">3.2%</span><span class="kb-sep">|</span><span class="kb-r">Peak: 7.9% Dec-24</span></div></div>
+      <div class="kpi k-ink anim anim-4"><div class="kpi-hd"><span class="kpi-label">PAR 180+ (Deep Stress)</span></div><div class="kpi-val sm">17.0%</div><div class="kpi-foot"><span class="tag-dn">↑ Still rising</span><span class="tag-nu">₹53,551 Cr at risk</span></div><div class="kpi-bench"><span class="kb-l">Sep-25</span><span class="kb-v">16.2%</span><span class="kb-sep">|</span><span class="kb-r">Dec-24: 9.7%</span></div></div>
+    </div>
+    <div class="g2">
+      <div class="card">
+        <div class="sec-hd"><div class="sec-hd-l"><div class="sec-bar"></div><div class="sec-title">PAR Trend — All Buckets (Mar-23 → Dec-25)</div></div></div>
+        <div class="cw" style="height:250px"><canvas id="c-par-full"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="sec-hd"><div class="sec-hd-l"><div class="sec-bar"></div><div class="sec-title">PAR Comparison by Lender Type (Dec-25)</div></div></div>
+        <div class="cw" style="height:250px"><canvas id="c-par-lender"></canvas></div>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <div class="table-head"><div class="sec-hd-l"><div class="sec-bar"></div><div class="sec-title">PAR Bucket Analysis — By Lender Type (31 Dec 2025)</div></div></div>
+      <table>
+        <thead><tr><th>Lender Type</th><th>PAR 1–30</th><th>PAR 31–60</th><th>PAR 61–90</th><th>PAR 91–180</th><th>PAR 1–180</th><th>vs Sep-25</th><th>vs Dec-24</th><th>Signal</th></tr></thead>
+        <tbody>
+          <tr><td class="bold">NBFC-MFIs</td><td class="mono">0.7%</td><td class="mono">0.7%</td><td class="mono">0.6%</td><td class="mono">1.9%</td><td class="mono bold">3.9%</td><td><span class="badge b-good">↓ from 6.0%</span></td><td><span class="badge b-good">↓ from 8.7%</span></td><td><span class="dot dot-good">● Improving</span></td></tr>
+          <tr><td class="bold">Banks</td><td class="mono">1.7%</td><td class="mono">0.7%</td><td class="mono">0.9%</td><td class="mono">2.6%</td><td class="mono bold">6.0%</td><td><span class="badge b-good">↓ from 6.8%</span></td><td><span class="badge b-good">↓ from 8.4%</span></td><td><span class="dot dot-warn">● Watch</span></td></tr>
+          <tr><td class="bold">Small Finance Banks</td><td class="mono">0.7%</td><td class="mono">0.7%</td><td class="mono">0.9%</td><td class="mono">2.0%</td><td class="mono bold">4.2%</td><td><span class="badge b-good">↓ from 6.2%</span></td><td><span class="badge b-good">↓ from 9.1%</span></td><td><span class="dot dot-good">● Improving</span></td></tr>
+          <tr><td class="bold">NBFCs</td><td class="mono">0.8%</td><td class="mono">0.6%</td><td class="mono">0.6%</td><td class="mono">1.4%</td><td class="mono bold">3.3%</td><td><span class="badge b-good">↓ from 4.5%</span></td><td><span class="badge b-good">↓ from 5.3%</span></td><td><span class="dot dot-good">● Improving</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       TAB 4: NBFC-MFI INSIGHTS
+  ══════════════════════════════════════════════════════ -->
+  <div class="tab-pane" id="tab-nbfc">
+    <div class="alert alert-navy">
+      <span class="alert-icon">📊</span>
+      <div><strong>NBFC-MFI Deep Dive (43 MFIN Members):</strong> AUM ₹1,33,983 Cr — up <strong>▲2.0% QoQ</strong>. Disbursements surged <strong>▲32.8% YoY</strong> to ₹29,819 Cr. PAR 31–180 improved sharply to <strong>3.1%</strong> from 6.3% YoY. Debt funding up <strong>▲55.3% YoY</strong>. Large MFIs dominate with <strong>93.7% of AUM</strong>.</div>
+    </div>
+    <div class="g4">
+      <div class="kpi k-gold anim anim-1"><div class="kpi-hd"><span class="kpi-label">AUM (Own + Managed)</span><div class="kpi-icon icon-gold">💼</div></div><div class="kpi-val sm">₹1,33,983 Cr</div><div class="kpi-foot"><span class="tag-dn">▼7.4% YoY</span><span class="tag-up"> ▲2% QoQ</span></div><div class="kpi-bench"><span class="kb-l">Owned / Off-BS</span><span class="kb-v">₹1,10,977 Cr</span><span class="kb-sep">|</span><span class="kb-r">₹23,006 Cr</span></div></div>
+      <div class="kpi k-sage anim anim-2"><div class="kpi-hd"><span class="kpi-label">Q3 Disbursement</span><div class="kpi-icon icon-sage">📤</div></div><div class="kpi-val sm">₹29,819 Cr</div><div class="kpi-foot"><span class="tag-up">▲32.8% YoY</span><span class="tag-nu">49.3 Lk loans</span></div><div class="kpi-bench"><span class="kb-l">Avg Ticket Q3</span><span class="kb-v">₹60,479</span><span class="kb-sep">|</span><span class="kb-r">Q3 FY25: ₹52,005</span></div></div>
+      <div class="kpi k-rose anim anim-3"><div class="kpi-hd"><span class="kpi-label">PAR 31–180 (Self-Reported)</span><div class="kpi-icon icon-rose">📉</div></div><div class="kpi-val sm">3.1%</div><div class="kpi-foot"><span class="tag-up">↓ from 6.3%</span><span class="tag-nu">Q3 FY25</span></div><div class="kpi-bench"><span class="kb-l">PAR 30+ (AUM)</span><span class="kb-v">7.0%</span><span class="kb-sep">|</span><span class="kb-r">Managed: 16.3%</span></div></div>
+      <div class="kpi k-teal anim anim-4"><div class="kpi-hd"><span class="kpi-label">Debt Funding Q3</span><div class="kpi-icon icon-teal">🏦</div></div><div class="kpi-val sm">₹21,020 Cr</div><div class="kpi-foot"><span class="tag-up">▲55.3% YoY</span></div><div class="kpi-bench"><span class="kb-l">Banks share</span><span class="kb-v">73.2%</span><span class="kb-sep">|</span><span class="kb-r">Non-Bank: 16.9%</span></div></div>
+    </div>
+    <div class="g5">
+      <div class="kpi k-amber anim anim-1"><div class="kpi-label" style="margin-bottom:8px">Active Clients</div><div class="kpi-val xs">3.4 Cr</div><div class="kpi-foot"><span class="tag-dn">▼18.5% YoY</span></div></div>
+      <div class="kpi k-ink anim anim-2"><div class="kpi-label" style="margin-bottom:8px">Branches</div><div class="kpi-val xs">22,403</div><div class="kpi-foot"><span class="tag-dn">▼0.9% YoY</span></div></div>
+      <div class="kpi k-navy anim anim-3"><div class="kpi-label" style="margin-bottom:8px">Avg Loan O/S per A/C</div><div class="kpi-val xs">₹33,277</div><div class="kpi-foot"><span class="tag-up">▲21.2% YoY</span></div></div>
+      <div class="kpi k-teal anim anim-4"><div class="kpi-label" style="margin-bottom:8px">Total Employees</div><div class="kpi-val xs">1,98,608</div><div class="kpi-foot"><span class="tag-dn">▼9.4%</span><span class="tag-nu">LOs: 1,24,457</span></div></div>
+      <div class="kpi k-sage anim anim-5"><div class="kpi-label" style="margin-bottom:8px">Total Equity</div><div class="kpi-val xs">₹35,370 Cr</div><div class="kpi-foot"><span class="tag-nu">D:E Ratio: 2.8x</span></div></div>
+    </div>
+    <div class="g32">
+      <div class="card">
+        <div class="sec-hd"><div class="sec-hd-l"><div class="sec-bar"></div><div class="sec-title">NBFC-MFI AUM & Client Trend (Mar-23 → Dec-25)</div></div></div>
+        <div class="cw" style="height:230px"><canvas id="c-nbfc-trend"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="sec-hd"><div class="sec-hd-l"><div class="sec-bar"></div><div class="sec-title">MFI Size Distribution — Dec-25</div></div></div>
+        <div style="display:flex;gap:8px;margin-bottom:14px">
+          <div style="flex:1;background:var(--navy-bg);border:1px solid rgba(26,58,110,.12);border-radius:10px;padding:14px;text-align:center">
+            <div style="font-family:'Playfair Display',serif;font-size:30px;color:var(--navy2)">14</div>
+            <div style="font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.6px">Large</div>
+            <div style="font-size:9px;color:var(--navy3);margin-top:3px">AUM ≥ ₹2,000 Cr</div>
+            <div style="font-size:10.5px;font-weight:700;color:var(--navy2);margin-top:4px">93.7% of AUM</div>
+          </div>
+          <div style="flex:1;background:var(--amber-bg);border:1px solid rgba(192,96,0,.12);border-radius:10px;padding:14px;text-align:center">
+            <div style="font-family:'Playfair Display',serif;font-size:30px;color:var(--amber2)">5</div>
+            <div style="font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.6px">Medium</div>
+            <div style="font-size:9px;color:var(--amber2);margin-top:3px">₹500–₹2,000 Cr</div>
+            <div style="font-size:10.5px;font-weight:700;color:var(--amber2);margin-top:4px">4.0% of AUM</div>
+          </div>
+          <div style="flex:1;background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:14px;text-align:center">
+            <div style="font-family:'Playfair Display',serif;font-size:30px;color:var(--ink2)">24</div>
+            <div style="font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.6px">Small</div>
+            <div style="font-size:9px;color:var(--muted);margin-top:3px">AUM &lt; ₹500 Cr</div>
+            <div style="font-size:10.5px;font-weight:700;color:var(--muted);margin-top:4px">2.3% of AUM</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="mrow"><span class="mrow-l">Top 10 MFIs share of AUM</span><span class="mrow-r">82.2%</span></div>
+          <div class="mrow"><span class="mrow-l">Qualifying Assets / Total Assets</span><span class="mrow-r">63.2%</span></div>
+          <div class="mrow"><span class="mrow-l">Rural portfolio (% AUM)</span><span class="mrow-r">83.8%</span></div>
+          <div class="mrow"><span class="mrow-l">Agriculture loans (% AUM)</span><span class="mrow-r">66.9%</span></div>
+          <div class="mrow"><span class="mrow-l">Cashless disbursement rate</span><span class="mrow-r" style="color:var(--sage2)">100% ✓</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="card">
+        <div class="sec-hd"><div class="sec-hd-l"><div class="sec-bar"></div><div class="sec-title">Top 10 NBFC-MFIs by AUM (₹ Cr) — Dec-25</div></div></div>
+        <div id="top10-mfi"></div>
+      </div>
+      <div class="card">
+        <div class="sec-hd"><div class="sec-hd-l"><div class="sec-bar"></div><div class="sec-title">PAR Trend — Owned vs Managed Portfolio</div></div></div>
+        <div class="cw" style="height:230px"><canvas id="c-nbfc-par"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       TAB 5: DISBURSEMENTS
+  ══════════════════════════════════════════════════════ -->
+  <div class="tab-pane" id="tab-disbursement">
+    <div class="alert alert-sage">
+      <span class="alert-icon">📈</span>
+      <div><strong>Disbursement Recovery:</strong> Industry disbursed <strong>₹60,853 Cr</strong> in Q3 FY26 (101 Lk loans). NBFC-MFI disbursements up <strong>▲32.8% YoY</strong> to ₹29,819 Cr. Bihar leads at ₹4,299 Cr (▲40% YoY). Average ticket size rising across all entity types — NBFC-MFIs at <strong>₹60,479</strong> (▲16.3% YoY).</div>
+    </div>
+    <div class="g4">
+      <div class="kpi k-gold anim anim-1"><div class="kpi-hd"><span class="kpi-label">Industry Q3 Disbursement</span><div class="kpi-icon icon-gold">📤</div></div><div class="kpi-val sm">₹60,853 Cr</div><div class="kpi-foot"><span class="tag-up">▲ Recovery Signal</span></div><div class="kpi-bench"><span class="kb-l">101 Lk accounts</span><span class="kb-v">101 Lk</span><span class="kb-sep">|</span><span class="kb-r">Q3 FY25: 118 Lk</span></div></div>
+      <div class="kpi k-sage anim anim-2"><div class="kpi-hd"><span class="kpi-label">NBFC-MFI Q3 Disbursement</span><div class="kpi-icon icon-sage">💰</div></div><div class="kpi-val sm">₹29,819 Cr</div><div class="kpi-foot"><span class="tag-up">▲32.8% YoY</span><span class="tag-nu">49.3 Lk</span></div><div class="kpi-bench"><span class="kb-l">Avg ticket</span><span class="kb-v">₹60,479</span><span class="kb-sep">|</span><span class="kb-r">+16.3% YoY</span></div></div>
+      <div class="kpi k-teal anim anim-3"><div class="kpi-hd"><span class="kpi-label">Cashless Disbursement</span><div class="kpi-icon icon-teal">✅</div></div><div class="kpi-val sm">100%</div><div class="kpi-foot"><span class="tag-up">Full Compliance</span><span class="tag-nu">36/43 MFIs</span></div><div class="kpi-bench"><span class="kb-l">8 consecutive quarters</span><span class="kb-v">≥99.7%</span><span class="kb-sep">|</span><span class="kb-r">Since Q4 FY23-24</span></div></div>
+      <div class="kpi k-amber anim anim-4"><div class="kpi-hd"><span class="kpi-label">Top State — Bihar</span><div class="kpi-icon icon-amber">🥇</div></div><div class="kpi-val sm">₹4,299 Cr</div><div class="kpi-foot"><span class="tag-up">▲40% YoY</span><span class="tag-nu">17% of NBFC-MFI</span></div><div class="kpi-bench"><span class="kb-l">Top 10 states</span><span class="kb-v">83.3%</span><span class="kb-sep">|</span><span class="kb-r">Top 5: 57%</span></div></div>
+    </div>
+    <div class="g2">
+      <div class="card">
+        <div class="sec-hd"><div class="sec-hd-l"><div class="sec-bar"></div><div class="sec-title">Industry Disbursement Trend (Q4 FY22-23 → Q3 FY25-26)</div></div></div>
+        <div class="cw" style="height:235px"><canvas id="c-disb-trend"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="sec-hd"><div class="sec-hd-l"><div class="sec-bar"></div><div class="sec-title">NBFC-MFI Top 10 States — Disbursement (₹ Cr)</div></div></div>
+        <div class="cw" style="height:235px"><canvas id="c-disb-state"></canvas></div>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <div class="table-head"><div class="sec-hd-l"><div class="sec-bar"></div><div class="sec-title">NBFC-MFI State Disbursement — Q3 FY25-26 vs Q3 FY24-25 (Top 10 States)</div></div></div>
+      <table>
+        <thead><tr><th>State</th><th>Q3 FY24-25 (₹ Cr)</th><th>Q2 FY25-26 (₹ Cr)</th><th>Q3 FY25-26 (₹ Cr)</th><th>YoY Change</th><th>Loans (Lk)</th><th>Avg Ticket (₹)</th><th>Share of Total</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge b-gold">Bihar</span></td><td class="mono">3,061</td><td class="mono">3,428</td><td class="mono bold">4,299</td><td><span class="badge b-good">▲40%</span></td><td class="mono">6.92</td><td class="mono">62,118</td><td><div class="par-mini par-good"><span class="mono" style="width:30px">17%</span><div class="par-track"><div class="par-fill" style="width:100%"></div></div></div></td></tr>
+          <tr><td><span class="badge b-navy">Uttar Pradesh</span></td><td class="mono">2,656</td><td class="mono">3,102</td><td class="mono bold">3,918</td><td><span class="badge b-good">▲48%</span></td><td class="mono">6.71</td><td class="mono">58,353</td><td><div class="par-mini par-good"><span class="mono" style="width:30px">16%</span><div class="par-track"><div class="par-fill" style="width:94%"></div></div></div></td></tr>
+          <tr><td><span class="badge b-good">Tamil Nadu</span></td><td class="mono">2,462</td><td class="mono">2,705</td><td class="mono bold">3,193</td><td><span class="badge b-good">▲30%</span></td><td class="mono">4.48</td><td class="mono">71,311</td><td><div class="par-mini par-good"><span class="mono" style="width:30px">13%</span><div class="par-track"><div class="par-fill" style="width:76%"></div></div></div></td></tr>
+          <tr><td><span class="badge b-warn">Karnataka</span></td><td class="mono">3,185</td><td class="mono">2,895</td><td class="mono bold">3,074</td><td><span class="badge b-warn">▼3%</span></td><td class="mono">5.14</td><td class="mono">59,782</td><td><div class="par-mini par-warn"><span class="mono" style="width:30px">12%</span><div class="par-track"><div class="par-fill" style="width:71%"></div></div></div></td></tr>
+          <tr><td><span class="badge b-neu">Maharashtra</span></td><td class="mono">1,953</td><td class="mono">2,185</td><td class="mono bold">2,515</td><td><span class="badge b-good">▲29%</span></td><td class="mono">4.25</td><td class="mono">59,143</td><td><div class="par-mini par-good"><span class="mono" style="width:30px">10%</span><div class="par-track"><div class="par-fill" style="width:59%"></div></div></div></td></tr>
+          <tr><td><span class="badge b-navy">West Bengal</span></td><td class="mono">1,286</td><td class="mono">1,840</td><td class="mono bold">2,168</td><td><span class="badge b-good">▲69%</span></td><td class="mono">3.80</td><td class="mono">57,026</td><td><div class="par-mini par-good"><span class="mono" style="width:30px">9%</span><div class="par-track"><div class="par-fill" style="width:53%"></div></div></div></td></tr>
+          <tr><td><span class="badge b-gold">Madhya Pradesh</span></td><td class="mono">1,643</td><td class="mono">1,702</td><td class="mono bold">1,990</td><td><span class="badge b-good">▲21%</span></td><td class="mono">3.54</td><td class="mono">56,267</td><td><div class="par-mini par-good"><span class="mono" style="width:30px">8%</span><div class="par-track"><div class="par-fill" style="width:47%"></div></div></div></td></tr>
+          <tr><td><span class="badge b-warn">Odisha</span></td><td class="mono">1,192</td><td class="mono">1,416</td><td class="mono bold">1,703</td><td><span class="badge b-good">▲43%</span></td><td class="mono">2.77</td><td class="mono">61,472</td><td><div class="par-mini par-good"><span class="mono" style="width:30px">7%</span><div class="par-track"><div class="par-fill" style="width:41%"></div></div></div></td></tr>
+          <tr><td><span class="badge b-neu">Rajasthan</span></td><td class="mono">843</td><td class="mono">895</td><td class="mono bold">1,047</td><td><span class="badge b-good">▲24%</span></td><td class="mono">1.71</td><td class="mono">61,141</td><td><div class="par-mini par-good"><span class="mono" style="width:30px">4%</span><div class="par-track"><div class="par-fill" style="width:25%"></div></div></div></td></tr>
+          <tr><td><span class="badge b-neu">Jharkhand</span></td><td class="mono">537</td><td class="mono">725</td><td class="mono bold">935</td><td><span class="badge b-good">▲74%</span></td><td class="mono">1.65</td><td class="mono">56,736</td><td><div class="par-mini par-good"><span class="mono" style="width:30px">4%</span><div class="par-track"><div class="par-fill" style="width:22%"></div></div></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       TAB 6: FUNDING & BORROWINGS
+  ══════════════════════════════════════════════════════ -->
+  <div class="tab-pane" id="tab-funding">
+    <div class="alert alert-sage">
+      <span class="alert-icon">💵</span>
+      <div><strong>Funding Recovery Signal:</strong> Q3 FY26 debt funding at <strong>₹21,020 Cr</strong> — up ▲55.3% YoY. Banks contributed <strong>73.2%</strong>. Securitization surged to ₹3,910 Cr (▲292% YoY). Outstanding borrowings at ₹99,166 Cr. Total equity: ₹35,370 Cr with D:E ratio at comfortable <strong>2.8x</strong>.</div>
+    </div>
+    <div class="g4">
+      <div class="kpi k-navy anim anim-1"><div class="kpi-hd"><span class="kpi-label">Outstanding Borrowings</span><div class="kpi-icon icon-navy">🏛️</div></div><div class="kpi-val sm">₹99,166 Cr</div><div class="kpi-foot"><span class="tag-dn">▼5.3% YoY</span><span class="tag-nu">D:E: 2.8x</span></div><div class="kpi-bench"><span class="kb-l">Banks share</span><span class="kb-v">61.7%</span><span class="kb-sep">|</span><span class="kb-r">ECB: 13.7%</span></div></div>
+      <div class="kpi k-sage anim anim-2"><div class="kpi-hd"><span class="kpi-label">Q3 Debt Funding Received</span><div class="kpi-icon icon-sage">💵</div></div><div class="kpi-val sm">₹21,020 Cr</div><div class="kpi-foot"><span class="tag-up">▲55.3% YoY</span></div><div class="kpi-bench"><span class="kb-l">Securitization</span><span class="kb-v">₹3,910 Cr</span><span class="kb-sep">|</span><span class="kb-r">▲292% YoY</span></div></div>
+      <div class="kpi k-gold anim anim-3"><div class="kpi-hd"><span class="kpi-label">Total Equity</span><div class="kpi-icon icon-gold">📊</div></div><div class="kpi-val sm">₹35,370 Cr</div><div class="kpi-foot"><span class="tag-dn">▼1.7% YoY</span></div><div class="kpi-bench"><span class="kb-l">Domestic : Foreign</span><span class="kb-v">74% : 26%</span><span class="kb-sep">|</span><span class="kb-r">Reserves: 88.9%</span></div></div>
+      <div class="kpi k-teal anim anim-4"><div class="kpi-hd"><span class="kpi-label">Total Assets</span><div class="kpi-icon icon-teal">🏢</div></div><div class="kpi-val sm">₹1,39,640 Cr</div><div class="kpi-foot"><span class="tag-dn">▼4.6% YoY</span></div><div class="kpi-bench"><span class="kb-l">Term loans % of debt</span><span class="kb-v">76.3%</span><span class="kb-sep">|</span><span class="kb-r">Debentures: 9.9%</span></div></div>
+    </div>
+    <div class="g2">
+      <div class="card">
+        <div class="sec-hd"><div class="sec-hd-l"><div class="sec-bar"></div><div class="sec-title">Borrowings O/S Mix by Source (Dec-25)</div></div></div>
+        <div class="cw" style="height:240px"><canvas id="c-borrow-mix"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="sec-hd"><div class="sec-hd-l"><div class="sec-bar"></div><div class="sec-title">Debt Funding & Securitization Trend</div></div></div>
+        <div class="cw" style="height:240px"><canvas id="c-fund-trend"></canvas></div>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <div class="table-head"><div class="sec-hd-l"><div class="sec-bar"></div><div class="sec-title">Borrowings O/S by MFI Size Category (₹ Cr) — 31 Dec 2025</div></div></div>
+      <table>
+        <thead><tr><th>Source</th><th>Small MFIs</th><th>Medium MFIs</th><th>Large MFIs</th><th>Total</th><th>Share</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td class="bold">AIFIs (NABARD / SIDBI / MUDRA)</td><td class="mono">1</td><td class="mono">94</td><td class="mono">5,832</td><td class="mono bold">5,927</td><td><div class="par-mini par-good"><span class="mono" style="width:35px">6.0%</span><div class="par-track"><div class="par-fill" style="width:36%"></div></div></div></td><td style="font-size:10.5px;color:var(--muted)">SIDBI largest at 59% of AIFI share</td></tr>
+          <tr><td class="bold">Banks</td><td class="mono">402</td><td class="mono">917</td><td class="mono">59,860</td><td class="mono bold">61,180</td><td><div class="par-mini par-good"><span class="mono" style="width:35px">61.7%</span><div class="par-track"><div class="par-fill" style="width:100%"></div></div></div></td><td style="font-size:10.5px;color:var(--muted)">Dominant source; stable</td></tr>
+          <tr><td class="bold">Non-Bank Entities</td><td class="mono">345</td><td class="mono">1,119</td><td class="mono">11,783</td><td class="mono bold">13,247</td><td><div class="par-mini par-warn"><span class="mono" style="width:35px">13.4%</span><div class="par-track"><div class="par-fill" style="width:81%"></div></div></div></td><td style="font-size:10.5px;color:var(--muted)">Growing channel</td></tr>
+          <tr><td class="bold">ECB (External Commercial)</td><td class="mono">175</td><td class="mono">—</td><td class="mono">13,389</td><td class="mono bold">13,612</td><td><div class="par-mini par-warn"><span class="mono" style="width:35px">13.7%</span><div class="par-track"><div class="par-fill" style="width:83%"></div></div></div></td><td style="font-size:10.5px;color:var(--muted)">Large MFIs only</td></tr>
+          <tr><td class="bold">Others</td><td class="mono">274</td><td class="mono">160</td><td class="mono">4,766</td><td class="mono bold">5,200</td><td><div class="par-mini par-good"><span class="mono" style="width:35px">5.2%</span><div class="par-track"><div class="par-fill" style="width:32%"></div></div></div></td><td style="font-size:10.5px;color:var(--muted)">Sub-debt, CPs, etc.</td></tr>
+          <tr style="background:var(--bg)"><td class="bold" style="color:var(--navy2)">Total Outstanding</td><td class="mono bold">1,197</td><td class="mono bold">2,290</td><td class="mono bold">95,630</td><td class="mono bold" style="color:var(--gold)">99,166</td><td class="mono bold">100%</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       TAB 7: REGIONAL DISTRIBUTION
+  ══════════════════════════════════════════════════════ -->
+  <div class="tab-pane" id="tab-regional">
+    <div class="alert alert-navy">
+      <span class="alert-icon">🗺️</span>
+      <div><strong>Geographic Concentration:</strong> East & North-East dominates with <strong>36.4% GLP share</strong>. Top 10 states account for <strong>83% of portfolio</strong>. Bihar is the single largest state at ₹48,569 Cr (15.4% of universe). South region holds 25.8% share. Microfinance now covers <strong>714 districts across 28 states + 8 UTs</strong>.</div>
+    </div>
+    <div class="g5">
+      <div class="kpi k-navy anim anim-1"><div class="kpi-label" style="margin-bottom:8px">East & North East</div><div class="kpi-val xs">36.4% GLP</div><div class="kpi-foot"><span class="tag-nu">35.4% borrowers</span></div></div>
+      <div class="kpi k-teal anim anim-2"><div class="kpi-label" style="margin-bottom:8px">South</div><div class="kpi-val xs">25.8% GLP</div><div class="kpi-foot"><span class="tag-nu">27.8% borrowers</span></div></div>
+      <div class="kpi k-amber anim anim-3"><div class="kpi-label" style="margin-bottom:8px">North</div><div class="kpi-val xs">15.0% GLP</div><div class="kpi-foot"><span class="tag-nu">15.0% borrowers</span></div></div>
+      <div class="kpi k-sage anim anim-4"><div class="kpi-label" style="margin-bottom:8px">West</div><div class="kpi-val xs">14.9% GLP</div><div class="kpi-foot"><span class="tag-nu">14.2% borrowers</span></div></div>
+      <div class="kpi k-rose anim anim-5"><div class="kpi-label" style="margin-bottom:8px">Central</div><div class="kpi-val xs">7.9% GLP</div><div class="kpi-foot"><span class="tag-nu">7.6% borrowers</span></div></div>
+    </div>
+    <div class="g32">
+      <div class="card">
+        <div class="sec-hd"><div class="sec-hd-l"><div class="sec-bar"></div><div class="sec-title">Regional GLP Trend (Mar-23 → Dec-25)</div></div></div>
+        <div class="cw" style="height:240px"><canvas id="c-regional"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="sec-hd"><div class="sec-hd-l"><div class="sec-bar"></div><div class="sec-title">NBFC-MFI AUM Regional Split (Dec-25)</div></div></div>
+        <div id="regional-bars" style="margin-top:8px"></div>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <div class="table-head"><div class="sec-hd-l"><div class="sec-bar"></div><div class="sec-title">Top 10 States — Universe GLP (31 Dec 2025)</div></div></div>
+      <table>
+        <thead><tr><th>Rank</th><th>State</th><th>Unique Borrowers</th><th>Active Loan A/Cs</th><th>GLP (₹ Cr)</th><th>Avg Loan O/S (₹)</th><th>Universe Share</th></tr></thead>
+        <tbody>
+          <tr><td class="mono bold">1</td><td><span class="badge b-gold">Bihar</span></td><td class="mono">96.27 Lk</td><td class="mono">159.70 Lk</td><td class="mono bold">48,569</td><td class="mono">30,412</td><td><div class="par-mini par-good"><span class="mono" style="width:32px">15.4%</span><div class="par-track"><div class="par-fill" style="width:100%"></div></div></div></td></tr>
+          <tr><td class="mono bold">2</td><td><span class="badge b-good">Tamil Nadu</span></td><td class="mono">70.76 Lk</td><td class="mono">115.08 Lk</td><td class="mono bold">39,691</td><td class="mono">34,491</td><td><div class="par-mini par-good"><span class="mono" style="width:32px">12.6%</span><div class="par-track"><div class="par-fill" style="width:82%"></div></div></div></td></tr>
+          <tr><td class="mono bold">3</td><td><span class="badge b-navy">Uttar Pradesh</span></td><td class="mono">78.78 Lk</td><td class="mono">122.48 Lk</td><td class="mono bold">36,489</td><td class="mono">29,793</td><td><div class="par-mini par-good"><span class="mono" style="width:32px">11.6%</span><div class="par-track"><div class="par-fill" style="width:75%"></div></div></div></td></tr>
+          <tr><td class="mono bold">4</td><td><span class="badge b-warn">Karnataka</span></td><td class="mono">50.35 Lk</td><td class="mono">91.96 Lk</td><td class="mono bold">28,119</td><td class="mono">30,578</td><td><div class="par-mini par-warn"><span class="mono" style="width:32px">8.9%</span><div class="par-track"><div class="par-fill" style="width:58%"></div></div></div></td></tr>
+          <tr><td class="mono bold">5</td><td><span class="badge b-neu">West Bengal</span></td><td class="mono">62.15 Lk</td><td class="mono">93.48 Lk</td><td class="mono bold">27,510</td><td class="mono">29,428</td><td><div class="par-mini par-good"><span class="mono" style="width:32px">8.7%</span><div class="par-track"><div class="par-fill" style="width:57%"></div></div></div></td></tr>
+          <tr><td class="mono bold">6</td><td><span class="badge b-neu">Maharashtra</span></td><td class="mono">48.70 Lk</td><td class="mono">83.52 Lk</td><td class="mono bold">23,569</td><td class="mono">28,222</td><td><div class="par-mini par-good"><span class="mono" style="width:32px">7.5%</span><div class="par-track"><div class="par-fill" style="width:49%"></div></div></div></td></tr>
+          <tr><td class="mono bold">7</td><td><span class="badge b-gold">Madhya Pradesh</span></td><td class="mono">42.29 Lk</td><td class="mono">63.79 Lk</td><td class="mono bold">18,350</td><td class="mono">28,764</td><td><div class="par-mini par-good"><span class="mono" style="width:32px">5.8%</span><div class="par-track"><div class="par-fill" style="width:38%"></div></div></div></td></tr>
+          <tr><td class="mono bold">8</td><td><span class="badge b-warn">Odisha</span></td><td class="mono">36.96 Lk</td><td class="mono">64.36 Lk</td><td class="mono bold">16,657</td><td class="mono">25,881</td><td><div class="par-mini par-good"><span class="mono" style="width:32px">5.3%</span><div class="par-track"><div class="par-fill" style="width:34%"></div></div></div></td></tr>
+          <tr><td class="mono bold">9</td><td><span class="badge b-bad">Rajasthan</span></td><td class="mono">29.15 Lk</td><td class="mono">42.92 Lk</td><td class="mono bold">12,374</td><td class="mono">28,831</td><td><div class="par-mini par-good"><span class="mono" style="width:32px">3.9%</span><div class="par-track"><div class="par-fill" style="width:25%"></div></div></div></td></tr>
+          <tr><td class="mono bold">10</td><td><span class="badge b-good">Kerala</span></td><td class="mono">18.49 Lk</td><td class="mono">32.61 Lk</td><td class="mono bold">9,974</td><td class="mono">30,584</td><td><div class="par-mini par-good"><span class="mono" style="width:32px">3.2%</span><div class="par-track"><div class="par-fill" style="width:21%"></div></div></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       TAB 8: STATE INTELLIGENCE
+  ══════════════════════════════════════════════════════ -->
+  <div class="tab-pane" id="tab-states">
+    <div class="alert alert-rose">
+      <span class="alert-icon">⚡</span>
+      <div><strong>State Risk Highlights:</strong> Gujarat has highest PAR 30+ at <strong>10.7%</strong>, followed by Rajasthan at 9.3% and Karnataka at 8.5%. Assam shows exceptional recovery with PAR 30+ at just <strong>1.5%</strong>. Kerala and Chhattisgarh show strong portfolio quality at ~5%. Most states showing YoY PAR improvement.</div>
+    </div>
+    <div class="g2">
+      <div class="card">
+        <div class="sec-hd"><div class="sec-hd-l"><div class="sec-bar"></div><div class="sec-title">State PAR 30+ — Heatmap View</div></div></div>
+        <div class="cw" style="height:270px"><canvas id="c-state-par"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="sec-hd"><div class="sec-hd-l"><div class="sec-bar"></div><div class="sec-title">State AUM — Dec-24 vs Dec-25 (₹ Cr)</div></div></div>
+        <div class="cw" style="height:270px"><canvas id="c-state-aum"></canvas></div>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <div class="table-head"><div class="sec-hd-l"><div class="sec-bar"></div><div class="sec-title">NBFC-MFI State Performance — PAR & AUM (15 Key States, 31 Dec 2025)</div></div></div>
+      <table>
+        <thead><tr><th>State</th><th>MFI Count</th><th>AUM Dec-25 (₹ Cr)</th><th>AUM Dec-24 (₹ Cr)</th><th>YoY Change</th><th>PAR 30+</th><th>PAR 90+</th><th>PAR 180+</th><th>Risk Signal</th></tr></thead>
+        <tbody id="state-table-body"></tbody>
+      </table>
+    </div>
+    <!-- State Cards Grid -->
+    <div>
+      <div class="sec-hd"><div class="sec-hd-l"><div class="sec-bar"></div><div class="sec-title">State Quick-View Cards (Top 15)</div></div></div>
+      <div class="state-grid" id="state-cards-grid"></div>
+    </div>
+  </div>
+
+  </div><!-- /pg -->
+
+  <div class="footer">
+    <div>
+      <span class="footer-brand">MFIN Micrometer Issue 56</span>
+      <span style="margin-left:8px">Data as on 31 December 2025 · Source: CRIF High Mark (Section I) & MFIN Member Self-Reported Data (Section II · 43 Members)</span>
+    </div>
+    <div style="text-align:right;line-height:1.6">
+      <div style="color:var(--gold);font-weight:600;font-size:10px">Research: Priyabrata Banerjee · Educational Purposes Only</div>
+      <div>Publicly available data from mfinindia.org · Not for commercial redistribution</div>
+    </div>
+  </div>
+</div><!-- /main -->
+</div><!-- /shell -->
+
+<script>
+// ════════════════════════════════════════════════
+//  DATA
+// ════════════════════════════════════════════════
+const TRENDQ = ['Mar-23','Jun-23','Sep-23','Dec-23','Mar-24','Jun-24','Sep-24','Dec-24','Mar-25','Jun-25','Sep-25','Dec-25'];
+const Q_LABELS = ['Q4 22-23','Q1 23-24','Q2 23-24','Q3 23-24','Q4 23-24','Q1 24-25','Q2 24-25','Q3 24-25','Q4 24-25','Q1 25-26','Q2 25-26','Q3 25-26'];
+
+const stateData = [
+  {c:'BH',name:'Bihar',      aum24:21252,aum:18977,par30:7.6,par90:6.1,par180:4.1,mfi:27,yoy:-11},
+  {c:'UP',name:'Uttar Pradesh',aum24:16837,aum:15868,par30:7.3,par90:5.9,par180:4.0,mfi:28,yoy:-6},
+  {c:'TN',name:'Tamil Nadu',  aum24:17494,aum:15747,par30:6.4,par90:5.2,par180:3.8,mfi:23,yoy:-10},
+  {c:'KA',name:'Karnataka',   aum24:17058,aum:14986,par30:8.5,par90:7.1,par180:4.9,mfi:23,yoy:-12},
+  {c:'MH',name:'Maharashtra', aum24:11151,aum:11494,par30:5.0,par90:3.8,par180:2.4,mfi:23,yoy:3},
+  {c:'WB',name:'West Bengal', aum24:9790, aum:9796, par30:6.2,par90:4.5,par180:3.1,mfi:25,yoy:0},
+  {c:'MP',name:'MP',          aum24:9881, aum:9231, par30:7.7,par90:6.1,par180:4.1,mfi:26,yoy:-7},
+  {c:'OR',name:'Odisha',      aum24:9025, aum:7292, par30:7.2,par90:6.0,par180:4.5,mfi:23,yoy:-19},
+  {c:'RJ',name:'Rajasthan',   aum24:6247, aum:5323, par30:9.3,par90:7.2,par180:5.1,mfi:25,yoy:-15},
+  {c:'JH',name:'Jharkhand',   aum24:4248, aum:3776, par30:6.8,par90:5.7,par180:4.2,mfi:25,yoy:-11},
+  {c:'GJ',name:'Gujarat',     aum24:4228, aum:3416, par30:10.7,par90:8.7,par180:6.4,mfi:21,yoy:-19},
+  {c:'KL',name:'Kerala',      aum24:3385, aum:3311, par30:4.4,par90:3.7,par180:2.9,mfi:15,yoy:-2},
+  {c:'AS',name:'Assam',       aum24:2087, aum:3160, par30:1.5,par90:1.1,par180:0.6,mfi:16,yoy:51},
+  {c:'CG',name:'Chhattisgarh',aum24:2691, aum:2452, par30:5.0,par90:3.9,par180:2.8,mfi:21,yoy:-9},
+  {c:'HR',name:'Haryana',     aum24:1965, aum:1773, par30:8.1,par90:6.0,par180:4.2,mfi:20,yoy:-10},
+];
+
+const top10MFIs = [
+  {n:'CreditAccess',v:26566},{n:'Muthoot Microfin',v:13079},{n:'Satin',v:11482},
+  {n:'Annapurna',v:10691},{n:'IIFL Samasta',v:9681},{n:'Svatantra',v:9133},
+  {n:'Chaitanya',v:8374},{n:'Belstar',v:7910},{n:'Fusion',v:6876},{n:'Arohan',v:6340},
+];
+
+// Chart defaults
+const cf = {gc:'rgba(26,22,18,.07)', tc:'#9e9389'};
+function baseOpts(extra={}) {
+  return {
+    responsive:true, maintainAspectRatio:false,
+    animation:{duration:700,easing:'easeInOutQuart'},
+    plugins:{
+      legend:{labels:{color:cf.tc,font:{size:10},boxWidth:10,padding:10}},
+      tooltip:{
+        backgroundColor:'rgba(26,22,18,.92)',titleFont:{family:'Playfair Display',size:12},
+        bodyFont:{family:'DM Sans',size:11},padding:10,cornerRadius:9,
+        titleColor:'#f5f3ee',bodyColor:'#c8c0b4',
+      },
+      ...(extra.plugins||{})
+    },
+    ...(extra.extra||{})
+  };
+}
+
+// ════════════════════════════════════════════════
+//  NAV
+// ════════════════════════════════════════════════
+const tabMeta = {
+  overview:    {title:'Industry Overview',   sub:'Microfinance Universe · All Lender Categories · Q3 FY 2025-26'},
+  entities:    {title:'Lender Analysis',     sub:'Entity-wise Portfolio Breakdown · NBFC-MFIs · Banks · SFBs · NBFCs'},
+  par:         {title:'PAR & Asset Quality', sub:'Portfolio at Risk Analysis · All Buckets · All Lenders · Q3 FY 2025-26'},
+  nbfc:        {title:'NBFC-MFI Insights',   sub:'43 MFIN Member NBFC-MFIs · Self-Reported Data · Q3 FY 2025-26'},
+  disbursement:{title:'Disbursements',       sub:'Industry & NBFC-MFI Disbursement Analysis · Q3 FY 2025-26'},
+  funding:     {title:'Funding & Borrowings',sub:'Debt Funding · Borrowings Outstanding · ALM · Q3 FY 2025-26'},
+  regional:    {title:'Regional Distribution',sub:'Geographic Portfolio Distribution · CRIF Bureau Data · Dec 2025'},
+  states:      {title:'State Intelligence',  sub:'State-wise PAR & AUM · 43 MFIN Member NBFC-MFIs · Top 15 States'},
+};
+
+const builtTabs = new Set();
+
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const tab = item.dataset.tab;
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    item.classList.add('active');
+    document.getElementById('tab-'+tab).classList.add('active');
+    document.getElementById('tb-title').textContent = tabMeta[tab].title;
+    document.getElementById('tb-sub').textContent = tabMeta[tab].sub;
+    if (!builtTabs.has(tab)) { buildTabCharts(tab); builtTabs.add(tab); }
+    window.scrollTo(0,0);
+  });
+});
+
+// ════════════════════════════════════════════════
+//  INIT STATIC CONTENT
+// ════════════════════════════════════════════════
+// Share bars overview
+const shareData = [
+  {n:'NBFC-MFIs',v:132418,pct:42.1,c:'#1a3a6e'},
+  {n:'Banks',v:83905,pct:26.7,c:'#0a5c5c'},
+  {n:'Small Finance Banks',v:55187,pct:17.5,c:'#2d5a27'},
+  {n:'NBFCs',v:39456,pct:12.5,c:'#c06000'},
+  {n:'Others',v:3761,pct:1.2,c:'#7a3d00'},
+];
+document.getElementById('share-bars-overview').innerHTML = shareData.map(s =>
+  `<div class="share-row">
+    <span class="share-label">${s.n}</span>
+    <div class="share-bar-wrap"><div class="share-bar-fill" style="width:${s.pct}%;background:${s.c}"></div></div>
+    <span class="share-pct">${s.pct}%</span>
+    <span class="share-amt">₹${(s.v/100).toFixed(1)}K Cr</span>
+  </div>`).join('');
+
+// Top 10 MFI list
+document.getElementById('top10-mfi').innerHTML = top10MFIs.map((m,i) =>
+  `<div class="rank-row">
+    <div class="rank-n${i<3?' top3':''}">${i+1}</div>
+    <div><div class="rank-name">${m.n}</div><div class="rank-sub" style="height:4px;background:var(--bg2);border-radius:2px;width:140px;margin-top:4px;overflow:hidden"><div style="width:${(m.v/26566*100).toFixed(0)}%;height:100%;background:linear-gradient(90deg,#b8860b,#f0c040);border-radius:2px"></div></div></div>
+    <div class="rank-val">₹${m.v.toLocaleString()} Cr</div>
+  </div>`).join('');
+
+// Regional bars
+const regionalData = [
+  {n:'East & North East',glp:36.4,aum:33,c:'#1a3a6e'},
+  {n:'South',glp:25.8,aum:28,c:'#0a5c5c'},
+  {n:'North',glp:15.0,aum:16,c:'#c06000'},
+  {n:'West',glp:14.9,aum:15,c:'#2d5a27'},
+  {n:'Central',glp:7.9,aum:9,c:'#8b1a1a'},
+];
+document.getElementById('regional-bars').innerHTML = regionalData.map(r =>
+  `<div style="margin-bottom:11px">
+    <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+      <span style="font-size:11px;font-weight:600;color:var(--ink2)">${r.n}</span>
+      <span style="font-size:9.5px;color:var(--muted)">GLP ${r.glp}% · AUM ${r.aum}%</span>
+    </div>
+    <div style="height:10px;background:var(--bg2);border-radius:5px;overflow:hidden">
+      <div style="width:${r.glp}%;height:100%;background:${r.c};border-radius:5px"></div>
+    </div>
+  </div>`).join('');
+
+// State table
+const badgeMap = {
+  true:  (v)=>`<span class="badge b-good">▲${Math.abs(v)}%</span>`,
+  false: (v)=>`<span class="badge b-bad">▼${Math.abs(v)}%</span>`,
+};
+document.getElementById('state-table-body').innerHTML = stateData.map(s => {
+  const risk = s.par30<5 ? 'dot-good' : s.par30<8 ? 'dot-warn' : 'dot-bad';
+  const riskLabel = s.par30<5 ? '● Low' : s.par30<8 ? '● Moderate' : '● High';
+  const yoyBadge = s.yoy >= 0 ? badgeMap.true(s.yoy) : badgeMap.false(s.yoy);
+  return `<tr>
+    <td><span class="badge ${s.par30<5?'b-good':s.par30<8?'b-warn':'b-bad'}">${s.name}</span></td>
+    <td class="mono">${s.mfi}</td><td class="mono bold">${s.aum.toLocaleString()}</td>
+    <td class="mono">${s.aum24.toLocaleString()}</td><td>${yoyBadge}</td>
+    <td class="mono bold">${s.par30}%</td><td class="mono">${s.par90}%</td><td class="mono">${s.par180}%</td>
+    <td><span class="dot ${risk}">${riskLabel}</span></td>
+  </tr>`;
+}).join('');
+
+// State cards grid
+document.getElementById('state-cards-grid').innerHTML = stateData.map(s => {
+  const risk = s.par30<5 ? 'b-good' : s.par30<8 ? 'b-warn' : 'b-bad';
+  const pct = Math.min(s.par30/12*100,100);
+  const cls = s.par30<5 ? 'par-good' : s.par30<8 ? 'par-warn' : 'par-bad';
+  return `<div class="state-card">
+    <div class="sc-top"><div class="sc-code">${s.name}</div><span class="badge ${risk}">${s.par30}% PAR</span></div>
+    <div class="sc-aum">₹${s.aum.toLocaleString()} Cr</div>
+    <div class="sc-meta">${s.mfi} MFIs · YoY: ${s.yoy>=0?'+':''}${s.yoy}%</div>
+    <div class="par-mini ${cls}">
+      <div class="par-track"><div class="par-fill" style="width:${pct}%"></div></div>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted)">${s.par90}% / ${s.par180}%</span>
+    </div>
+  </div>`;
+}).join('');
+
+// ════════════════════════════════════════════════
+//  BUILD CHARTS
+// ════════════════════════════════════════════════
+function buildTabCharts(tab) {
+  if (tab === 'overview') buildOverviewCharts();
+  else if (tab === 'entities') buildEntityCharts();
+  else if (tab === 'par') buildPARCharts();
+  else if (tab === 'nbfc') buildNBFCCharts();
+  else if (tab === 'disbursement') buildDisbCharts();
+  else if (tab === 'funding') buildFundingCharts();
+  else if (tab === 'regional') buildRegionalCharts();
+  else if (tab === 'states') buildStateCharts();
+}
+
+function buildOverviewCharts() {
+  new Chart('c-glptrend',{type:'line',data:{labels:TRENDQ,datasets:[
+    {label:'GLP (₹ Cr)',data:[348339,355977,376110,399442,433697,424444,408049,385348,375030,353233,339510,314728],borderColor:'#b8860b',backgroundColor:'rgba(184,134,11,.07)',fill:true,tension:.4,pointRadius:3,pointBackgroundColor:'#b8860b',yAxisID:'y',borderWidth:2.5},
+    {label:'Loan Accounts (Cr)',data:[13.0,13.5,13.9,14.6,14.9,14.9,14.6,13.9,13.3,12.5,11.7,10.5],borderColor:'#1a3a6e',tension:.4,pointRadius:3,yAxisID:'y1'},
+    {label:'Unique Borrowers (Cr)',data:[6.6,7.1,7.1,7.4,7.8,8.0,8.1,7.9,7.8,7.5,7.0,6.6],borderColor:'#0a5c5c',tension:.4,pointRadius:3,borderDash:[4,3],yAxisID:'y1'},
+  ]},options:{...baseOpts(),scales:{x:{grid:{color:cf.gc},ticks:{color:cf.tc,font:{size:9}}},y:{grid:{color:cf.gc},ticks:{color:cf.tc,callback:v=>'₹'+(v/1000).toFixed(0)+'K'},position:'left'},y1:{grid:{display:false},ticks:{color:cf.tc,callback:v=>v+' Cr'},position:'right'}}}});
+
+  new Chart('c-par-overview',{type:'line',data:{labels:TRENDQ,datasets:[
+    {label:'PAR 31–60',data:[1.1,.6,.5,.6,.6,.7,.7,1.2,1.6,1.4,1.4,1.0],borderColor:'#c06000',tension:.4,pointRadius:2,borderWidth:2},
+    {label:'PAR 61–90',data:[1.0,1.0,.8,1.0,.9,.9,1.2,1.9,3.3,3.5,3.2,2.8],borderColor:'#c0392b',tension:.4,pointRadius:2,borderWidth:2},
+    {label:'PAR 91–180',data:[2.0,.6,.5,.6,.6,.7,.7,.8,.8,.9,1.0,.6],borderColor:'#8b1a1a',tension:.4,pointRadius:2,borderDash:[3,2],borderWidth:1.5},
+    {label:'PAR 180+',data:[8.6,7.4,7.4,7.3,7.9,7.6,8.5,9.7,11.3,13.6,16.2,17.0],borderColor:'#1a1612',backgroundColor:'rgba(26,22,18,.06)',fill:true,tension:.4,pointRadius:4,borderWidth:2.5},
+  ]},options:{...baseOpts(),scales:{x:{grid:{color:cf.gc},ticks:{color:cf.tc,font:{size:9}}},y:{grid:{color:cf.gc},ticks:{color:cf.tc,callback:v=>v+'%'},min:0}}}});
+}
+
+function buildEntityCharts() {
+  new Chart('c-ent-par',{type:'bar',data:{labels:['NBFC-MFIs','Banks','SFBs','NBFCs'],datasets:[
+    {label:'Dec-24',data:[8.7,8.4,9.1,5.3],backgroundColor:'rgba(26,58,110,.15)',borderRadius:4},
+    {label:'Sep-25',data:[6.0,6.8,6.2,4.5],backgroundColor:'rgba(26,58,110,.45)',borderRadius:4},
+    {label:'Dec-25',data:[3.9,6.0,4.2,3.3],backgroundColor:'rgba(26,58,110,.85)',borderRadius:4},
+  ]},options:{...baseOpts(),scales:{x:{grid:{color:cf.gc},ticks:{color:cf.tc}},y:{grid:{color:cf.gc},ticks:{color:cf.tc,callback:v=>v+'%'}}}}});
+
+  new Chart('c-ent-ticket',{type:'bar',data:{labels:['NBFC-MFIs','Banks','SFBs','NBFCs'],datasets:[
+    {label:'Dec-24',data:[27190,26490,28317,34386],backgroundColor:'rgba(10,92,92,.2)',borderRadius:4},
+    {label:'Sep-25',data:[29456,26859,29203,35933],backgroundColor:'rgba(10,92,92,.5)',borderRadius:4},
+    {label:'Dec-25',data:[30688,25662,30670,38851],backgroundColor:'rgba(10,92,92,.85)',borderRadius:4},
+  ]},options:{...baseOpts(),scales:{x:{grid:{color:cf.gc},ticks:{color:cf.tc}},y:{grid:{color:cf.gc},ticks:{color:cf.tc,callback:v=>'₹'+v.toLocaleString()}}}}});
+
+  new Chart('c-ent-pos',{type:'bar',data:{labels:['NBFC-MFIs','Banks','SFBs','NBFCs'],datasets:[
+    {label:'Dec-24 (₹ Cr)',data:[150282,126437,62686,43675],backgroundColor:'rgba(184,134,11,.2)',borderRadius:4},
+    {label:'Sep-25 (₹ Cr)',data:[133161,106608,55936,39977],backgroundColor:'rgba(184,134,11,.5)',borderRadius:4},
+    {label:'Dec-25 (₹ Cr)',data:[132418,83905,55187,39456],backgroundColor:'rgba(184,134,11,.85)',borderRadius:4},
+  ]},options:{...baseOpts(),scales:{x:{grid:{color:cf.gc},ticks:{color:cf.tc}},y:{grid:{color:cf.gc},ticks:{color:cf.tc,callback:v=>'₹'+(v/1000).toFixed(0)+'K'}}}}});
+}
+
+function buildPARCharts() {
+  new Chart('c-par-full',{type:'line',data:{labels:TRENDQ,datasets:[
+    {label:'PAR 31–60',data:[1.1,.6,.5,.6,.6,.7,.7,1.2,1.6,1.4,1.4,1.0],borderColor:'#c06000',tension:.4,pointRadius:4,pointBackgroundColor:'#c06000',borderWidth:2.5},
+    {label:'PAR 61–90',data:[1.0,1.0,.8,1.0,.9,.9,1.2,1.9,3.3,3.5,3.2,2.8],borderColor:'#c0392b',tension:.4,pointRadius:4,pointBackgroundColor:'#c0392b',borderWidth:2.5},
+    {label:'PAR 91–180',data:[2.0,.6,.5,.6,.6,.7,.7,.8,.8,.9,1.0,.6],borderColor:'#8b1a1a',tension:.4,pointRadius:3,borderDash:[3,2],borderWidth:2},
+    {label:'PAR 180+',data:[8.6,7.4,7.4,7.3,7.9,7.6,8.5,9.7,11.3,13.6,16.2,17.0],borderColor:'#1a1612',backgroundColor:'rgba(26,22,18,.06)',fill:true,tension:.4,pointRadius:5,borderWidth:3,pointBackgroundColor:'#1a1612'},
+  ]},options:{...baseOpts(),scales:{x:{grid:{color:cf.gc},ticks:{color:cf.tc,font:{size:9}}},y:{grid:{color:cf.gc},ticks:{color:cf.tc,callback:v=>v+'%'},min:0}}}});
+
+  new Chart('c-par-lender',{type:'bar',data:{labels:['NBFC-MFIs','Banks','SFBs','NBFCs'],datasets:[
+    {label:'PAR 1–30',data:[.7,1.7,.7,.8],backgroundColor:'rgba(45,90,39,.7)',borderRadius:3,stack:'s'},
+    {label:'PAR 31–60',data:[.7,.7,.7,.6],backgroundColor:'rgba(192,96,0,.7)',borderRadius:3,stack:'s'},
+    {label:'PAR 61–90',data:[.6,.9,.9,.6],backgroundColor:'rgba(192,57,43,.7)',borderRadius:3,stack:'s'},
+    {label:'PAR 91–180',data:[1.9,2.6,2.0,1.4],backgroundColor:'rgba(139,26,26,.8)',borderRadius:3,stack:'s'},
+  ]},options:{...baseOpts(),scales:{x:{grid:{color:cf.gc},ticks:{color:cf.tc},stacked:true},y:{grid:{color:cf.gc},ticks:{color:cf.tc,callback:v=>v+'%'},stacked:true}}}});
+}
+
+function buildNBFCCharts() {
+  new Chart('c-nbfc-trend',{type:'line',data:{labels:TRENDQ,datasets:[
+    {label:'AUM (₹ Cr)',data:[124954,129724,138246,146341,161038,159883,154706,144709,141255,133628,131344,133983],borderColor:'#b8860b',backgroundColor:'rgba(184,134,11,.07)',fill:true,tension:.4,pointRadius:3,yAxisID:'y',borderWidth:2.5},
+    {label:'Clients (Cr)',data:[3.7,3.8,4.1,4.2,4.4,4.5,4.5,4.2,4.0,3.8,3.5,3.4],borderColor:'#1a3a6e',tension:.4,pointRadius:3,yAxisID:'y1',borderDash:[4,3]},
+  ]},options:{...baseOpts(),scales:{x:{grid:{color:cf.gc},ticks:{color:cf.tc,font:{size:9}}},y:{grid:{color:cf.gc},ticks:{color:cf.tc,callback:v=>'₹'+(v/1000).toFixed(0)+'K'}},y1:{grid:{display:false},ticks:{color:cf.tc,callback:v=>v+' Cr'},position:'right'}}}});
+
+  new Chart('c-nbfc-par',{type:'line',data:{labels:TRENDQ,datasets:[
+    {label:'PAR 30+ (Owned Portfolio)',data:[1.8,1.4,1.6,1.8,2.2,2.4,3.8,5.1,null,null,5.0,5.1],borderColor:'#1a3a6e',backgroundColor:'rgba(26,58,110,.07)',fill:true,tension:.4,pointRadius:4,borderWidth:2.5},
+    {label:'PAR 30+ (Managed Portfolio)',data:[null,null,null,null,null,null,null,16.3,null,null,null,16.3],borderColor:'#8b1a1a',tension:.4,pointRadius:6,borderDash:[4,3],pointStyle:'star'},
+    {label:'PAR 30+ (AUM – All)',data:[null,null,null,null,null,null,null,8.5,8.2,7.8,6.8,7.0],borderColor:'#b8860b',tension:.4,pointRadius:4,borderDash:[2,3],borderWidth:2},
+  ]},options:{...baseOpts(),scales:{x:{grid:{color:cf.gc},ticks:{color:cf.tc,font:{size:9}}},y:{grid:{color:cf.gc},ticks:{color:cf.tc,callback:v=>v+'%'},min:0,max:20}}}});
+}
+
+function buildDisbCharts() {
+  new Chart('c-disb-trend',{type:'bar',data:{labels:Q_LABELS,datasets:[
+    {label:'Loan Amt Disbursed (₹ Cr)',data:[107640,76567,68387,62817,70942,56677,59974,60530,null,null,null,60853],backgroundColor:'rgba(184,134,11,.75)',borderRadius:5,yAxisID:'y'},
+    {label:'Loans Disbursed (Lk)',type:'line',data:[223,157,135,118,132,101,99,101,null,null,null,101],borderColor:'#1a3a6e',tension:.4,pointRadius:5,borderDash:[4,3],yAxisID:'y1',borderWidth:2},
+  ]},options:{...baseOpts(),scales:{x:{grid:{color:cf.gc},ticks:{color:cf.tc,font:{size:9}}},y:{grid:{color:cf.gc},ticks:{color:cf.tc,callback:v=>'₹'+(v/1000).toFixed(0)+'K Cr'}},y1:{grid:{display:false},ticks:{color:cf.tc,callback:v=>v+' Lk'},position:'right'}}}});
+
+  new Chart('c-disb-state',{type:'bar',data:{labels:stateData.slice(0,10).map(s=>s.c),datasets:[
+    {label:'Q3 FY24-25',data:[3061,2656,2462,3185,1953,1286,1643,1192,843,537],backgroundColor:'rgba(26,58,110,.2)',borderRadius:4},
+    {label:'Q3 FY25-26',data:[4299,3918,3193,3074,2515,2168,1990,1703,1047,935],backgroundColor:'rgba(26,58,110,.8)',borderRadius:4},
+  ]},options:{...baseOpts(),scales:{x:{grid:{color:cf.gc},ticks:{color:cf.tc}},y:{grid:{color:cf.gc},ticks:{color:cf.tc,callback:v=>'₹'+v+' Cr'}}}}});
+}
+
+function buildFundingCharts() {
+  new Chart('c-borrow-mix',{type:'doughnut',data:{
+    labels:['Banks 61.7%','ECB 13.7%','Non-Bank 13.4%','AIFIs 6.0%','Others 5.2%'],
+    datasets:[{data:[61.7,13.7,13.4,6.0,5.2],backgroundColor:['#0f2144','#1a3a6e','#0a5c5c','#b8860b','#7a3d00'],borderColor:'#f5f3ee',borderWidth:3,hoverOffset:8}]
+  },options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{labels:{color:cf.tc,font:{size:10},boxWidth:10,padding:10}},tooltip:{backgroundColor:'rgba(26,22,18,.92)',titleFont:{family:'Playfair Display',size:12},bodyFont:{size:11},padding:10,cornerRadius:9}}}});
+
+  new Chart('c-fund-trend',{type:'bar',data:{labels:['Q3 FY24-25','Q2 FY25-26','Q3 FY25-26'],datasets:[
+    {label:'Debt Funding (₹ Cr)',data:[13532,19014,21020],backgroundColor:'rgba(15,33,68,.8)',borderRadius:6},
+    {label:'Securitization (₹ Cr)',data:[998,3919,3910],backgroundColor:'rgba(45,90,39,.8)',borderRadius:6},
+  ]},options:{...baseOpts(),scales:{x:{grid:{color:cf.gc},ticks:{color:cf.tc}},y:{grid:{color:cf.gc},ticks:{color:cf.tc,callback:v=>'₹'+v.toLocaleString()+' Cr'}}}}});
+}
+
+function buildRegionalCharts() {
+  new Chart('c-regional',{type:'line',data:{labels:TRENDQ,datasets:[
+    {label:'East & NE',data:[35,35,35,35,35,34,34,34,34,35,35,36.4],borderColor:'#1a3a6e',tension:.4,pointRadius:3,fill:false,borderWidth:2.5},
+    {label:'South',data:[28,28,28,27,27,27,26,26,26,26,26,25.8],borderColor:'#0a5c5c',tension:.4,pointRadius:3,fill:false,borderWidth:2.5},
+    {label:'North',data:[15,15,15,16,16,16,15,15,15,15,15,15.0],borderColor:'#c06000',tension:.4,pointRadius:2,borderDash:[4,3]},
+    {label:'West',data:[13,13,14,14,14,15,15,15,15,15,15,14.9],borderColor:'#2d5a27',tension:.4,pointRadius:2,borderDash:[4,3]},
+    {label:'Central',data:[8,8,8,8,8,8,8,8,8,8,8,7.9],borderColor:'#8b1a1a',tension:.4,pointRadius:2,borderDash:[2,4]},
+  ]},options:{...baseOpts(),scales:{x:{grid:{color:cf.gc},ticks:{color:cf.tc,font:{size:9}}},y:{grid:{color:cf.gc},ticks:{color:cf.tc,callback:v=>v+'%'},min:0,max:45}}}});
+}
+
+function buildStateCharts() {
+  new Chart('c-state-par',{type:'bar',data:{
+    labels:stateData.map(s=>s.c),
+    datasets:[
+      {label:'PAR 30+',data:stateData.map(s=>s.par30),backgroundColor:stateData.map(s=>s.par30<5?'rgba(45,90,39,.75)':s.par30<8?'rgba(192,96,0,.75)':'rgba(192,57,43,.85)'),borderRadius:5},
+      {label:'PAR 90+',data:stateData.map(s=>s.par90),backgroundColor:stateData.map(s=>s.par90<4?'rgba(45,90,39,.35)':s.par90<6?'rgba(192,96,0,.35)':'rgba(192,57,43,.35)'),borderRadius:5},
+      {label:'Ind. Avg (7.0%)',data:Array(15).fill(7.0),type:'line',borderColor:'#0f2144',borderDash:[5,3],pointRadius:0,borderWidth:1.5},
+    ]
+  },options:{...baseOpts(),scales:{x:{grid:{color:cf.gc},ticks:{color:cf.tc,font:{size:9}}},y:{grid:{color:cf.gc},ticks:{color:cf.tc,callback:v=>v+'%'},min:0}}}});
+
+  new Chart('c-state-aum',{type:'bar',data:{
+    labels:stateData.map(s=>s.c),
+    datasets:[
+      {label:'AUM Dec-24 (₹ Cr)',data:stateData.map(s=>s.aum24),backgroundColor:'rgba(184,134,11,.2)',borderRadius:4},
+      {label:'AUM Dec-25 (₹ Cr)',data:stateData.map(s=>s.aum),backgroundColor:stateData.map(s=>s.yoy>0?'rgba(45,90,39,.8)':'rgba(26,58,110,.75)'),borderRadius:4},
+    ]
+  },options:{...baseOpts(),scales:{x:{grid:{color:cf.gc},ticks:{color:cf.tc,font:{size:9}}},y:{grid:{color:cf.gc},ticks:{color:cf.tc,callback:v=>'₹'+(v/1000).toFixed(0)+'K'}}}}});
+}
+
+// ════════════════════════════════════════════════
+//  BUILD INITIAL TAB
+// ════════════════════════════════════════════════
+buildTabCharts('overview');
+builtTabs.add('overview');
+</script>
+</body>
+</html>
